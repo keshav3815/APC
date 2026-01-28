@@ -18,7 +18,7 @@ export default function Home() {
 
   useEffect(() => {
     // Animate counters
-    const targets = { members: 1250, books: 3500, events: 85, donations: 250000 }
+    const targets = { members: 1500, books: 500, events: 50, donations: 50000 }
     const duration = 2000
     const steps = 60
     const increment = duration / steps
@@ -157,7 +157,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {/* Members Card */}
+            {/* Active Members Card */}
             <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group">
               <div className="mb-4 flex justify-center">
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg group-hover:scale-110 transition-transform">
@@ -165,12 +165,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                {stats.members.toLocaleString()}+
+                1000+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Active Members</div>
             </div>
 
-            {/* Books Card */}
+            {/* Books Distributed Card */}
             <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group delay-100">
               <div className="mb-4 flex justify-center">
                 <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg group-hover:scale-110 transition-transform">
@@ -178,12 +178,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                {stats.books.toLocaleString()}+
+                350+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Books Distributed</div>
             </div>
 
-            {/* Events Card */}
+            {/* Events Organized Card */}
             <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group delay-200">
               <div className="mb-4 flex justify-center">
                 <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg group-hover:scale-110 transition-transform">
@@ -191,22 +191,22 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                {stats.events}+
+                50+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Events Organized</div>
             </div>
 
-            {/* Donations Card */}
+            {/* Fund Raised Card */}
             <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group delay-300">
               <div className="mb-4 flex justify-center">
                 <div className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg group-hover:scale-110 transition-transform">
-                  <TrendingUp className="w-8 h-8 text-white" />
+                  <Heart className="w-8 h-8 text-white" />
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                ₹{(stats.donations / 100000).toFixed(1)}L+
+                ₹50K+
               </div>
-              <div className="text-gray-600 dark:text-gray-400 font-medium">Funds Raised</div>
+              <div className="text-gray-600 dark:text-gray-400 font-medium">Fund Raised</div>
             </div>
           </div>
         </div>
@@ -319,9 +319,9 @@ export default function Home() {
             <div className="mt-16 pt-12 border-t border-white border-opacity-20">
               <p className="text-primary-100 mb-6 animate-fade-in-up delay-300">Trusted by community members worldwide</p>
               <div className="flex justify-center gap-8 flex-wrap animate-fade-in-up delay-400">
-                <Badge text="1250+ Members" variant="primary" />
-                <Badge text="3500+ Books" variant="primary" />
-                <Badge text="85+ Events" variant="primary" />
+                <Badge text="1500+ Members" variant="primary" />
+                <Badge text="500+ Books" variant="primary" />
+                <Badge text="50+ Events" variant="primary" />
               </div>
             </div>
           </div>

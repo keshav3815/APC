@@ -38,9 +38,9 @@ export default function Books() {
   })
 
   const stats = {
-    booksDonated: 3500,
-    booksDistributed: 2800,
-    activeUsers: 450,
+    booksDonated: 350,
+    booksDistributed: 300,
+    activeUsers: 500,
     impactCounter: 1200,
   }
 
@@ -54,71 +54,84 @@ export default function Books() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-blue-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+        {/* Hero Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block mb-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-600/10">
+              <BookOpen className="w-8 h-8 text-blue-600" />
+            </div>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-primary-600">
             Book Sharing & Donation
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
-            Share knowledge, transform lives
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Share knowledge, transform lives through our community book library
           </p>
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center">
-            <BookOpen className="w-10 h-10 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.booksDonated.toLocaleString()}</div>
-            <div className="text-gray-600 dark:text-gray-400">Books Donated</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-primary-500/0 group-hover:from-blue-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <BookOpen className="w-10 h-10 mb-3 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{stats.booksDonated}+</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Books Donated</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center">
-            <TrendingUp className="w-10 h-10 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.booksDistributed.toLocaleString()}</div>
-            <div className="text-gray-600 dark:text-gray-400">Books Distributed</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-primary-500/0 group-hover:from-green-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <TrendingUp className="w-10 h-10 mb-3 text-green-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{stats.booksDistributed}+</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Books Distributed</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center">
-            <Users className="w-10 h-10 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.activeUsers}</div>
-            <div className="text-gray-600 dark:text-gray-400">Active Users</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-primary-500/0 group-hover:from-purple-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <Users className="w-10 h-10 mb-3 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{stats.activeUsers}+</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Active Users</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center">
-            <Heart className="w-10 h-10 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.impactCounter.toLocaleString()}+</div>
-            <div className="text-gray-600 dark:text-gray-400">Lives Impacted</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-primary-500/0 group-hover:from-red-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <Heart className="w-10 h-10 mb-3 text-red-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{stats.impactCounter.toLocaleString()}+</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Lives Impacted</div>
           </div>
         </div>
 
         {/* Donate Button */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <button
             onClick={() => setShowDonateForm(true)}
-            className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center"
+            className="group relative bg-gradient-to-r from-blue-600 to-primary-600 text-white px-8 md:px-12 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-blue-600/40 transition-all duration-300 inline-flex items-center gap-2 overflow-hidden"
           >
-            <Heart className="w-5 h-5 mr-2" />
-            Donate Books
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <span className="relative flex items-center gap-2">
+              <Heart className="w-5 h-5 group-hover:animate-pulse" />
+              Donate Books
+            </span>
           </button>
         </div>
 
         {/* Book Categories */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Book Categories</h2>
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Book Categories</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: 'School', icon: '📚', count: 1200, desc: 'Textbooks and reference materials' },
-              { name: 'Competitive Exams', icon: '📖', count: 800, desc: 'Exam preparation books' },
-              { name: 'Skill Development', icon: '💼', count: 900, desc: 'Professional and technical skills' },
-              { name: 'Self-Help', icon: '🌟', count: 600, desc: 'Personal growth and motivation' },
-            ].map((category) => (
+              { name: 'School', icon: '📚', count: 100, desc: 'Textbooks and reference materials' },
+              { name: 'Competitive Exams', icon: '📖', count: 200, desc: 'Exam preparation books' },
+              { name: 'Skill Development', icon: '💼', count: 50, desc: 'Professional and technical skills' },
+              { name: 'Self-Help', icon: '🌟', count: 50, desc: 'Personal growth and motivation' },
+            ].map((category, index) => (
               <div
                 key={category.name}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
+                className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:-translate-y-2"
               >
-                <div className="text-5xl mb-4">{category.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{category.name}</h3>
-                <p className="text-2xl font-bold text-primary-600 mb-2">{category.count}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{category.desc}</p>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
+                <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">{category.icon}</div>
+                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{category.name}</h3>
+                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400 text-center mb-3">{category.count}+</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 text-center group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">{category.desc}</p>
               </div>
             ))}
           </div>
@@ -126,20 +139,21 @@ export default function Books() {
 
         {/* Active Users */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
-            <Users className="w-8 h-8 mr-3 text-primary-600" />
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white flex items-center">
+            <Users className="w-10 h-10 mr-3 text-primary-600" />
             Active Users
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {activeUsers.map((user) => (
               <div
                 key={user.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center"
+                className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 text-center hover:-translate-y-1"
               >
-                <div className="text-5xl mb-4">{user.photo}</div>
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{user.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {user.booksBorrowed} books borrowed
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
+                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">{user.photo}</div>
+                <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{user.name}</h3>
+                <p className="text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                  <span className="font-bold text-primary-600 dark:text-primary-400">{user.booksBorrowed}</span> books borrowed
                 </p>
               </div>
             ))}
@@ -147,30 +161,31 @@ export default function Books() {
         </section>
 
         {/* Testimonials */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
-            <Quote className="w-8 h-8 mr-3 text-primary-600" />
+        <section className="mb-16">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white flex items-center">
+            <Quote className="w-10 h-10 mr-3 text-primary-600" />
             Book Readers' Testimonials
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+                className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-yellow-300 dark:hover:border-yellow-700 hover:-translate-y-2"
               >
-                <div className="flex mb-4">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/0 to-primary-500/0 group-hover:from-yellow-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300 -z-10"></div>
+                <div className="flex mb-4 group-hover:scale-110 transition-transform duration-300 origin-left">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-4 italic">"{testimonial.text}"</p>
-                <p className="font-semibold text-gray-900 dark:text-white">- {testimonial.name}</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4 italic group-hover:text-gray-900 dark:group-hover:text-white transition-colors">"{testimonial.text}"</p>
+                <p className="font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">- {testimonial.name}</p>
               </div>
             ))}
           </div>
         </section>
 
-                {/* Book Issuance Records */}
+        {/* Book Issuance Records */}
         <section className="mb-16">
           <h2 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white flex items-center">
             <BookOpen className="w-10 h-10 mr-3 text-primary-600" />
@@ -190,39 +205,39 @@ export default function Books() {
                 key={index}
                 className="group relative h-full"
               >
-                <div className="glass-card p-6 rounded-xl backdrop-blur-lg border border-white/20 h-full flex flex-col overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:via-primary-500/5 group-hover:to-primary-600/10 transition-all duration-500 rounded-xl -z-10"></div>
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 h-full flex flex-col overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:via-primary-500/5 group-hover:to-primary-600/10 transition-all duration-500 rounded-2xl -z-10"></div>
                   
-                  <div className="text-5xl mb-4 text-center">📖</div>
+                  <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">📖</div>
                   
-                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                     {patron.name}
                   </h3>
                   
-                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-3"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-4"></div>
                   
-                  <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2 flex-grow">
-                    <div className="flex justify-between">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3 flex-grow">
+                    <div className="flex justify-between items-center">
                       <span className="font-semibold text-gray-700 dark:text-gray-300">Patron ID:</span>
-                      <span className="text-primary-600 dark:text-primary-400 font-mono">{patron.patronId}</span>
+                      <span className="text-primary-600 dark:text-primary-400 font-mono text-xs bg-primary-50 dark:bg-primary-900/30 px-3 py-1 rounded-lg">{patron.patronId}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="font-semibold text-gray-700 dark:text-gray-300">Issue Date:</span>
-                      <span className="text-gray-700 dark:text-gray-300">{patron.issueDate}</span>
+                      <span className="text-gray-700 dark:text-gray-300 text-sm">{patron.issueDate}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="font-semibold text-gray-700 dark:text-gray-300">Books Issued:</span>
-                      <span className="font-bold text-green-600 dark:text-green-400">{patron.booksIssued}</span>
+                      <span className="font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-lg">{patron.booksIssued}</span>
                     </div>
                   </div>
                   
-                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-3"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-4"></div>
                   
                   <div className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    <span className="font-semibold text-gray-700 dark:text-gray-300 block mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">Accession Numbers:</span>
-                    <div className="flex flex-wrap gap-1">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300 block mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400">Accession Numbers:</span>
+                    <div className="flex flex-wrap gap-2">
                       {patron.accNos.split(',').map((acc, i) => (
-                        <span key={i} className="bg-primary-100/50 dark:bg-primary-900/50 px-2 py-1 rounded text-primary-700 dark:text-primary-300 font-mono text-xs">
+                        <span key={i} className="bg-primary-100 dark:bg-primary-900/40 px-3 py-2 rounded-lg text-primary-700 dark:text-primary-300 font-mono text-xs font-medium hover:bg-primary-200 dark:hover:bg-primary-900/60 transition-colors">
                           {acc.trim()}
                         </span>
                       ))}

@@ -114,84 +114,98 @@ export default function Donations() {
   const activeDonors = donors.filter(d => d.amount > 0).length
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pt-20">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-blue-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">Your Donation Makes a Difference</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+        {/* Hero Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block mb-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-600/10">
+              <Heart className="w-8 h-8 text-red-600" />
+            </div>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-primary-600">
+            Your Donation Makes a Difference
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Join us in supporting education, community, and health initiatives across rural India
           </p>
         </div>
 
-
         {/* Financial Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-12">
-          <div className="glass-card p-6 rounded-lg text-center">
-            <TrendingUp className="w-12 h-12 mx-auto mb-2 text-green-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹55,538</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Income</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-primary-500/0 group-hover:from-green-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <TrendingUp className="w-12 h-12 mb-3 text-green-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹55,538</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Total Income</div>
           </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <TrendingDown className="w-12 h-12 mx-auto mb-2 text-red-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹41,214</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-primary-500/0 group-hover:from-red-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <TrendingDown className="w-12 h-12 mb-3 text-red-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹41,214</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Total Expenses</div>
           </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <Heart className="w-12 h-12 mx-auto mb-2 text-blue-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹1,915</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Avg Income</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-primary-500/0 group-hover:from-blue-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <Heart className="w-12 h-12 mb-3 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹1,915</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Avg Income</div>
           </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <Target className="w-12 h-12 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹14,324</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Balance</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-primary-500/0 group-hover:from-purple-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
+            <Target className="w-12 h-12 mb-3 text-primary-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹14,324</div>
+            <div className="text-gray-600 dark:text-gray-400 font-medium">Total Balance</div>
           </div>
         </div>
 
         {/* Impact Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-12">
-          <div className="glass-card p-6 rounded-lg text-center">
-            <Users className="w-12 h-12 mx-auto mb-2 text-primary-600" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{activeDonors}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Generous Donors</div>
+        <div className="grid md:grid-cols-2 gap-6 mb-16">
+          <div className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-primary-500/10 group-hover:from-primary-500/10 group-hover:to-primary-500/20 rounded-2xl transition-all duration-300"></div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Users className="w-12 h-12 mb-3 text-primary-600 group-hover:scale-110 transition-transform duration-300" />
+                <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">{activeDonors}</div>
+                <div className="text-lg text-gray-600 dark:text-gray-400 font-medium mt-2">Generous Donors</div>
+              </div>
+              <div className="text-6xl opacity-10">👥</div>
+            </div>
           </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <Heart className="w-12 h-12 mx-auto mb-2 text-red-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹{totalDonated.toLocaleString()}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Raised</div>
-          </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <Target className="w-12 h-12 mx-auto mb-2 text-blue-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">₹{(campaigns.reduce((sum, c) => sum + c.target, 0)).toLocaleString()}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Our Goal</div>
-          </div>
-          <div className="glass-card p-6 rounded-lg text-center">
-            <TrendingUp className="w-12 h-12 mx-auto mb-2 text-green-500" />
-            <div className="text-3xl font-bold text-gray-900 dark:text-white">{Math.round((totalDonated / campaigns.reduce((sum, c) => sum + c.target, 0)) * 100)}%</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Progress</div>
+          <div className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-primary-500/10 group-hover:from-red-500/10 group-hover:to-primary-500/20 rounded-2xl transition-all duration-300"></div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Heart className="w-12 h-12 mb-3 text-red-600 group-hover:scale-110 transition-transform duration-300" />
+                <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white">₹{totalDonated.toLocaleString()}</div>
+                <div className="text-lg text-gray-600 dark:text-gray-400 font-medium mt-2">Total Raised</div>
+              </div>
+              <div className="text-6xl opacity-10">💝</div>
+            </div>
           </div>
         </div>
 
         {/* Active Campaigns */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Active Campaigns</h2>
+        <div className="mb-16">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Active Campaigns</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {campaigns.map((campaign) => (
-              <div key={campaign.id} className="glass-card p-6 rounded-lg overflow-hidden hover-lift transition-transform duration-300">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{campaign.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">{campaign.description}</p>
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-semibold text-gray-900 dark:text-white">₹{campaign.raised.toLocaleString()}</span>
+              <div key={campaign.id} className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{campaign.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{campaign.description}</p>
+                <div className="mb-6">
+                  <div className="flex justify-between text-sm mb-3">
+                    <span className="font-bold text-gray-900 dark:text-white">₹{campaign.raised.toLocaleString()}</span>
                     <span className="text-gray-600 dark:text-gray-400">of ₹{campaign.target.toLocaleString()}</span>
                   </div>
-                  <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full"
+                      className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 h-3 rounded-full transition-all duration-500 shadow-lg shadow-primary-500/30"
                       style={{ width: `${(campaign.raised / campaign.target) * 100}%` }}
                     />
                   </div>
+                  <p className="text-sm text-primary-600 dark:text-primary-400 font-semibold mt-2">{Math.round((campaign.raised / campaign.target) * 100)}% funded</p>
                 </div>
               </div>
             ))}
@@ -199,67 +213,68 @@ export default function Donations() {
         </div>
 
         {/* Donation Form */}
-        <section className="mb-12">
+        <section className="mb-16">
           {/* Eye-catching header */}
-          <div className="mb-12 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 rounded-2xl p-12 text-center text-white shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full -mr-20 -mt-20"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full -ml-20 -mb-20"></div>
+          <div className="mb-12 bg-gradient-to-br from-primary-600 via-red-500 to-primary-700 rounded-3xl p-12 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full -mr-24 -mt-24"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
             <div className="relative z-10">
-              <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
-              <h2 className="text-5xl font-bold mb-4">Make Your Donation</h2>
-              <p className="text-xl opacity-90 max-w-2xl mx-auto">
-                Your generosity directly impacts the lives of thousands. Every rupee counts in our mission to build a better future.
+              <Heart className="w-20 h-20 mx-auto mb-6 animate-pulse text-red-200" />
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">Make Your Donation</h2>
+              <p className="text-lg md:text-xl opacity-95 max-w-3xl mx-auto leading-relaxed">
+                Your generosity directly impacts thousands of lives. Every rupee counts in our mission to build a better future for underprivileged communities.
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-10">
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-12 border border-gray-100 dark:border-gray-700">
             {submitted && (
-              <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 rounded-xl flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3 flex-shrink-0" />
-                <span className="text-lg font-semibold">✓ Thank you! Your donation has been recorded. We appreciate your support!</span>
+              <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-2 border-green-300 dark:border-green-600/50 text-green-700 dark:text-green-300 rounded-2xl flex items-center gap-4 animate-bounce">
+                <CheckCircle className="w-7 h-7 flex-shrink-0" />
+                <span className="text-lg font-bold">✓ Thank you! Your donation has been recorded. We appreciate your support!</span>
               </div>
             )}
 
             {/* Donation Type Selection */}
-            <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Choose Donation Type</h3>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Choose Donation Type</h3>
+              <div className="grid md:grid-cols-2 gap-6">
                 <button
                   type="button"
                   onClick={() => setDonationType('one-time')}
-                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
+                  className={`group p-8 border-3 rounded-2xl transition-all duration-300 transform hover:scale-105 ${
                     donationType === 'one-time'
-                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/30 dark:to-primary-800/20 shadow-xl'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700/50'
                   }`}
                 >
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">One-Time</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">Make a single donation</div>
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">One-Time Donation</div>
+                  <div className="text-base text-gray-600 dark:text-gray-400 mt-2">Make a single donation</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setDonationType('monthly')}
-                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 relative ${
+                  className={`group relative p-8 border-3 rounded-2xl transition-all duration-300 transform hover:scale-105 ${
                     donationType === 'monthly'
-                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/30 dark:to-primary-800/20 shadow-xl'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700/50'
                   }`}
                 >
-                  <span className="absolute top-2 right-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <span className="absolute top-4 right-4 bg-gradient-to-r from-primary-600 to-red-600 text-white text-xs font-bold px-4 py-2 rounded-full animate-pulse">
                     MOST IMPACTFUL
                   </span>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">Monthly</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">Recurring monthly donation</div>
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">Monthly Donation</div>
+                  <div className="text-base text-gray-600 dark:text-gray-400 mt-2">Recurring monthly support</div>
                 </button>
               </div>
             </div>
 
             {/* Amount Selection */}
-            <div className="mb-10">
-              <label className="text-xl font-bold text-gray-900 dark:text-white mb-4 block">
-                Select Amount: <span className="text-primary-600 text-3xl">₹{amount.toLocaleString()}</span>
-              </label>
+            <div className="mb-12">
+              <div className="flex items-baseline justify-between mb-6">
+                <label className="text-2xl font-bold text-gray-900 dark:text-white">Select Amount</label>
+                <span className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-red-600">₹{amount.toLocaleString()}</span>
+              </div>
               <input
                 type="range"
                 min="100"
@@ -267,17 +282,17 @@ export default function Donations() {
                 step="100"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                className="w-full h-4 bg-gray-300 dark:bg-gray-700 rounded-full appearance-none cursor-pointer accent-primary-600"
               />
-              <div className="grid grid-cols-4 gap-3 mt-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
                 {[500, 1000, 5000, 10000].map((presetAmount) => (
                   <button
                     key={presetAmount}
                     type="button"
                     onClick={() => setAmount(presetAmount)}
-                    className={`p-4 rounded-lg border-3 font-bold transition-all duration-200 transform hover:scale-105 ${
+                    className={`group p-4 rounded-xl border-3 font-bold transition-all duration-200 transform hover:scale-110 ${
                       amount === presetAmount
-                        ? 'border-primary-600 bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg'
+                        ? 'border-primary-600 bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-xl shadow-primary-600/40'
                         : 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:border-primary-400 dark:hover:border-primary-500'
                     }`}
                   >
@@ -287,30 +302,28 @@ export default function Donations() {
               </div>
             </div>
 
-            {/* Donation Purpose */}
-            <div className="mb-10">
+            {/* Donation Purpose - Hidden */}
+            <div className="hidden mb-10">
               <label className="text-xl font-bold text-gray-900 dark:text-white mb-4 block">Donation Purpose</label>
               <select
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
-                className="w-full px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-lg font-semibold focus:border-primary-600 focus:outline-none transition-colors"
+                className="w-full px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700/50 dark:text-white text-lg font-semibold focus:border-primary-600 focus:outline-none transition-colors"
               >
                 <option value="education">🎓 Education - Books, Libraries & Scholarships</option>
                 <option value="food">🍲 Food & Community - Meals & Support Programs</option>
                 <option value="health">⚕️ Health & Wellness - Medical Camps & Care</option>
               </select>
             </div>
-
-            {/* Donor Information */}
-            <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Information</h3>
-              <div className="grid md:grid-cols-3 gap-4">
+            <div className="mb-12 p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/30 dark:to-gray-800/30 rounded-2xl border border-gray-200 dark:border-gray-700">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Your Information</h3>
+              <div className="grid md:grid-cols-3 gap-5">
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={donorInfo.name}
                   onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
-                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700/50 dark:text-white text-base focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
                   required
                 />
                 <input
@@ -318,7 +331,7 @@ export default function Donations() {
                   placeholder="Email Address"
                   value={donorInfo.email}
                   onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
-                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700/50 dark:text-white text-base focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
                   required
                 />
                 <input
@@ -326,7 +339,7 @@ export default function Donations() {
                   placeholder="Phone Number"
                   value={donorInfo.phone}
                   onChange={(e) => setDonorInfo({ ...donorInfo, phone: e.target.value })}
-                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700/50 dark:text-white text-base focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
                   required
                 />
               </div>
@@ -334,47 +347,47 @@ export default function Donations() {
 
             {/* Payment Method */}
             <div className="mb-12">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Choose Payment Method</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Choose Payment Method</h3>
+              <div className="grid grid-cols-3 gap-5">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center ${
+                  className={`group p-6 border-3 rounded-2xl transition-all duration-300 transform hover:scale-105 text-center ${
                     paymentMethod === 'upi'
-                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/30 dark:to-primary-800/20 shadow-xl'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700/50'
                   }`}
                 >
-                  <Smartphone className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <Smartphone className="w-12 h-12 mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform" />
                   <div className="font-bold text-gray-900 dark:text-white">UPI</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Instant & Secure</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">Instant & Secure</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('razorpay')}
-                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center relative ${
+                  className={`group relative p-6 border-3 rounded-2xl transition-all duration-300 transform hover:scale-105 text-center ${
                     paymentMethod === 'razorpay'
-                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/30 dark:to-primary-800/20 shadow-xl'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700/50'
                   }`}
                 >
-                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded">POPULAR</span>
-                  <CreditCard className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-lg animate-pulse">POPULAR</span>
+                  <CreditCard className="w-12 h-12 mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform" />
                   <div className="font-bold text-gray-900 dark:text-white">Razorpay</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Card & Wallet</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">Card & Wallet</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('stripe')}
-                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center ${
+                  className={`group p-6 border-3 rounded-2xl transition-all duration-300 transform hover:scale-105 text-center ${
                     paymentMethod === 'stripe'
-                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/30 dark:to-primary-800/20 shadow-xl'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700/50'
                   }`}
                 >
-                  <Globe className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <Globe className="w-12 h-12 mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform" />
                   <div className="font-bold text-gray-900 dark:text-white">Stripe</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">International</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">International</div>
                 </button>
               </div>
             </div>
@@ -382,26 +395,25 @@ export default function Donations() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 hover:from-primary-700 hover:via-primary-600 hover:to-primary-800 text-white px-8 py-5 rounded-xl font-bold text-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3"
+              className="w-full bg-gradient-to-r from-primary-600 via-primary-500 to-red-600 hover:from-primary-700 hover:via-primary-600 hover:to-red-700 text-white px-8 py-6 rounded-2xl font-bold text-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-primary-600/40 active:scale-95 flex items-center justify-center gap-3 group"
             >
-              <Heart className="w-7 h-7" />
+              <Heart className="w-8 h-8 group-hover:animate-pulse" />
               Donate ₹{amount.toLocaleString()}
             </button>
 
             {/* Trust Badge */}
-            <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg text-center border-l-4 border-blue-500">
-              <p className="text-sm text-blue-900 dark:text-blue-100">
+            <div className="mt-10 p-6 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl text-center border-2 border-blue-300 dark:border-blue-600/50">
+              <p className="text-base text-blue-900 dark:text-blue-200">
                 <span className="font-bold">✓ 100% Secure & Transparent</span> - Your donation is tax-deductible and goes directly to help our communities.
               </p>
             </div>
           </form>
         </section>
 
-
         {/* Our Generous Donors */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Our Generous Donors</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">We are grateful to {activeDonors} wonderful donors who have contributed ₹{totalDonated.toLocaleString()} to support our mission</p>
+        <section className="mb-16">
+          <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Our Generous Donors</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">We are grateful to <span className="font-bold text-primary-600">{activeDonors}</span> wonderful donors who have contributed <span className="font-bold text-primary-600">₹{totalDonated.toLocaleString()}</span> to support our mission</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {donors
               .filter(d => d.amount > 0)
@@ -409,10 +421,10 @@ export default function Donations() {
               .map((donor, index) => (
                 <div
                   key={index}
-                  className="glass-card p-4 rounded-lg border-l-4 border-primary-600 hover-lift transition-transform duration-300"
+                  className="group bg-white dark:bg-gray-800 p-5 rounded-xl border-l-4 border-primary-600 hover:shadow-lg hover:shadow-primary-600/20 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <p className="font-semibold text-gray-900 dark:text-white">{donor.name}</p>
-                  <p className="text-lg font-bold text-primary-600">₹{donor.amount.toLocaleString()}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{donor.name}</p>
+                  <p className="text-lg font-bold text-primary-600 dark:text-primary-400 mt-2">₹{donor.amount.toLocaleString()}</p>
                 </div>
               ))}
           </div>
@@ -420,28 +432,28 @@ export default function Donations() {
 
         {/* Impact Stories */}
         <section className="mt-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Impact Stories</h2>
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Impact Stories</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {impactStories.map((story) => (
               <div
                 key={story.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+                className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700"
               >
                 <div className="flex items-center mb-4">
-                  <CheckCircle className="w-6 h-6 text-primary-600 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{story.name}</h3>
+                  <CheckCircle className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{story.name}</h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 italic">"{story.text}"</p>
+                <p className="text-gray-600 dark:text-gray-400 italic mb-6 leading-relaxed">"{story.text}"</p>
                 <span
-                  className={`inline-block mt-4 px-3 py-1 rounded-full text-xs font-semibold ${
+                  className={`inline-block px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
                     story.category === 'education'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
                       : story.category === 'food'
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                   }`}
                 >
-                  {story.category}
+                  {story.category.charAt(0).toUpperCase() + story.category.slice(1)}
                 </span>
               </div>
             ))}

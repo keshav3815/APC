@@ -83,17 +83,11 @@ export default function Contact() {
                 <div className="glass card-hover p-8 rounded-2xl delay-300 stagger-item">
                   <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Follow Us</h3>
                   <div className="flex space-x-4">
-                    <a href="#" className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover-lift transition-all">
+                    <a href="https://www.facebook.com/apcbheja" target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover-lift transition-all">
                       <Facebook className="w-5 h-5" />
                     </a>
-                    <a href="#" className="p-3 bg-gradient-to-br from-blue-400 to-blue-500 text-white rounded-lg hover-lift transition-all">
-                      <Twitter className="w-5 h-5" />
-                    </a>
-                    <a href="#" className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-lg hover-lift transition-all">
+                    <a href="https://www.instagram.com/apcbheja/" target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-lg hover-lift transition-all">
                       <Instagram className="w-5 h-5" />
-                    </a>
-                    <a href="#" className="p-3 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-lg hover-lift transition-all">
-                      <Linkedin className="w-5 h-5" />
                     </a>
                   </div>
                 </div>

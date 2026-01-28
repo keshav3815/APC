@@ -38,13 +38,10 @@ export default function Footer() {
               Building a stronger community through education, events, and meaningful collaboration worldwide.
             </p>
             <div className="mt-6 flex space-x-4">
-              <a href="#" className="p-2 bg-primary-600 rounded-lg hover-lift hover:bg-primary-500 transition-all">
+              <a href="https://www.facebook.com/apcbheja" target="_blank" rel="noopener noreferrer" className="p-2 bg-primary-600 rounded-lg hover-lift hover:bg-primary-500 transition-all">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-primary-600 rounded-lg hover-lift hover:bg-primary-500 transition-all">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 bg-primary-600 rounded-lg hover-lift hover:bg-primary-500 transition-all">
+              <a href="https://www.instagram.com/apcbheja/" target="_blank" rel="noopener noreferrer" className="p-2 bg-primary-600 rounded-lg hover-lift hover:bg-primary-500 transition-all">
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
