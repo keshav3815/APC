@@ -14,12 +14,14 @@ interface Member {
 }
 
 const members: Member[] = [
-  { id: 1, name: 'Rajesh Kumar', role: 'Volunteer Coordinator', photo: '👨‍💼', contribution: '500+ hours', city: 'Mumbai', type: 'volunteer' },
-  { id: 2, name: 'Priya Sharma', role: 'Education Mentor', photo: '👩‍🏫', contribution: '300+ students', city: 'Delhi', type: 'mentor' },
-  { id: 3, name: 'Amit Patel', role: 'Donor', photo: '👨‍💻', contribution: '₹50,000+', city: 'Bangalore', type: 'donor' },
-  { id: 4, name: 'Sneha Reddy', role: 'Student Leader', photo: '👩‍🎓', contribution: '200+ hours', city: 'Hyderabad', type: 'student' },
-  { id: 5, name: 'Vikram Singh', role: 'Event Organizer', photo: '👨‍💼', contribution: '25+ events', city: 'Pune', type: 'volunteer' },
-  { id: 6, name: 'Anita Desai', role: 'Book Donor', photo: '👩‍💼', contribution: '500+ books', city: 'Chennai', type: 'donor' },
+  { id: 1, name: 'Abhay Shankar Jha', role: 'Mentor', photo: '👨‍💼', contribution: 'Teaching, Event Organization', city: 'Delhi', type: 'mentor' },
+  { id: 2, name: 'Keshav Singh', role: 'Mentor', photo: '👨‍🏫', contribution: 'Teaching, Development, Events', city: 'Chandigarh', type: 'mentor' },
+  { id: 3, name: 'Sumit Singh', role: 'Mentor & Volunteer', photo: '👨‍💼', contribution: 'Teaching, Event Management', city: 'Darbhanga', type: 'mentor' },
+  { id: 4, name: 'Rohan Mishra', role: 'Volunteer', photo: '👨‍🎓', contribution: 'Teaching Support', city: 'Darbhanga', type: 'volunteer' },
+  { id: 5, name: 'Golden Kumar Yadav', role: 'Volunteer', photo: '👨‍💼', contribution: 'Event Management', city: 'Madhepur', type: 'volunteer' },
+  { id: 6, name: 'Shankar Kumar', role: 'Mentor', photo: '👨‍🏫', contribution: 'Teaching, Event Management', city: 'Madhepur', type: 'mentor' },
+  { id: 7, name: 'Abhishek Mishra', role: 'Volunteer', photo: '👨‍💼', contribution: 'Event Management', city: 'Madhepur', type: 'volunteer' },
+  { id: 8, name: 'Deepak Kumar', role: 'Volunteer', photo: '👨‍💼', contribution: 'Event Management', city: 'Madhepur', type: 'volunteer' },
 ]
 
 const pastContributors = [
@@ -119,7 +121,7 @@ export default function Community() {
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {['all', 'volunteer', 'donor', 'mentor', 'student'].map((filter) => (
+              {['all', 'volunteer', 'mentor', 'student'].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
@@ -148,29 +150,53 @@ export default function Community() {
 
         {/* Active Members */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
-            <UserCheck className="w-8 h-8 mr-3 text-primary-600" />
+          <h2 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white flex items-center">
+            <UserCheck className="w-10 h-10 mr-3 text-primary-600" />
             Active Members
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredMembers.map((member) => (
               <div
                 key={member.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="group relative h-full"
               >
-                <div className="text-6xl mb-4 text-center">{member.photo}</div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{member.name}</h3>
-                <p className="text-primary-600 dark:text-primary-400 mb-2">{member.role}</p>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  <MapPin className="w-4 h-4 inline mr-1" />
-                  {member.city}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-500">
-                  Contribution: {member.contribution}
-                </p>
-                <span className="inline-block mt-3 px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs">
-                  {member.type}
-                </span>
+                <div className="glass-card p-8 rounded-xl backdrop-blur-lg border border-white/20 h-full flex flex-col overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:via-primary-500/5 group-hover:to-primary-600/10 transition-all duration-500 rounded-xl -z-10"></div>
+                  
+                  <div className="text-7xl mb-6 text-center transform group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">
+                    {member.photo}
+                  </div>
+                  
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                    {member.name}
+                  </h3>
+                  
+                  <p className="text-primary-600 dark:text-primary-400 mb-3 text-center font-semibold text-sm group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-300">
+                    {member.role}
+                  </p>
+                  
+                  <div className="flex items-center justify-center text-gray-600 dark:text-gray-400 mb-4 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="text-sm font-medium">{member.city}</span>
+                  </div>
+                  
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-4"></div>
+                  
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex-grow group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300 block mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400">Skills & Interests</span>
+                    {member.contribution}
+                  </p>
+                  
+                  <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold mt-auto text-center transition-all duration-300 ${
+                    member.type === 'mentor'
+                      ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/50 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:shadow-lg group-hover:shadow-blue-500/25'
+                      : member.type === 'volunteer'
+                      ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-700 dark:text-green-300 border border-green-500/50 group-hover:from-green-500/40 group-hover:to-emerald-500/40 group-hover:shadow-lg group-hover:shadow-green-500/25'
+                      : 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/50 group-hover:from-purple-500/40 group-hover:to-pink-500/40 group-hover:shadow-lg group-hover:shadow-purple-500/25'
+                  }`}>
+                    {member.type.charAt(0).toUpperCase() + member.type.slice(1)}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -252,7 +278,6 @@ export default function Community() {
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="volunteer">Volunteer</option>
-                    <option value="donor">Donor</option>
                     <option value="mentor">Mentor</option>
                     <option value="student">Student</option>
                   </select>

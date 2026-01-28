@@ -200,41 +200,66 @@ export default function Donations() {
 
         {/* Donation Form */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Make Your Donation</h2>
-          <form onSubmit={handleSubmit} className="glass-card p-8 rounded-lg max-w-2xl">
+          {/* Eye-catching header */}
+          <div className="mb-12 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 rounded-2xl p-12 text-center text-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full -ml-20 -mb-20"></div>
+            <div className="relative z-10">
+              <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+              <h2 className="text-5xl font-bold mb-4">Make Your Donation</h2>
+              <p className="text-xl opacity-90 max-w-2xl mx-auto">
+                Your generosity directly impacts the lives of thousands. Every rupee counts in our mission to build a better future.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-10">
             {submitted && (
-              <div className="mb-6 p-4 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg">
-                ✓ Thank you! Your donation details have been received.
+              <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 rounded-xl flex items-center">
+                <CheckCircle className="w-6 h-6 mr-3 flex-shrink-0" />
+                <span className="text-lg font-semibold">✓ Thank you! Your donation has been recorded. We appreciate your support!</span>
               </div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <button
-                type="button"
-                onClick={() => setDonationType('one-time')}
-                className={`p-4 border-2 rounded-lg transition-colors ${
-                  donationType === 'one-time'
-                    ? 'border-primary-600 bg-primary-50 dark:bg-primary-900'
-                    : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
-                }`}
-              >
-                <div className="text-lg font-semibold">One-Time Donation</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setDonationType('monthly')}
-                className={`p-4 border-2 rounded-lg transition-colors ${
-                  donationType === 'monthly'
-                    ? 'border-primary-600 bg-primary-50 dark:bg-primary-900'
-                    : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
-                }`}
-              >
-                <div className="text-lg font-semibold">Monthly Donation</div>
-              </button>
+            {/* Donation Type Selection */}
+            <div className="mb-10">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Choose Donation Type</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setDonationType('one-time')}
+                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
+                    donationType === 'one-time'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                  }`}
+                >
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">One-Time</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Make a single donation</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDonationType('monthly')}
+                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 relative ${
+                    donationType === 'monthly'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
+                  }`}
+                >
+                  <span className="absolute top-2 right-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    MOST IMPACTFUL
+                  </span>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">Monthly</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Recurring monthly donation</div>
+                </button>
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Amount: ₹{amount}</label>
+            {/* Amount Selection */}
+            <div className="mb-10">
+              <label className="text-xl font-bold text-gray-900 dark:text-white mb-4 block">
+                Select Amount: <span className="text-primary-600 text-3xl">₹{amount.toLocaleString()}</span>
+              </label>
               <input
                 type="range"
                 min="100"
@@ -242,113 +267,136 @@ export default function Donations() {
                 step="100"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-3 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
-              <div className="grid grid-cols-4 gap-2 mt-3">
+              <div className="grid grid-cols-4 gap-3 mt-6">
                 {[500, 1000, 5000, 10000].map((presetAmount) => (
                   <button
                     key={presetAmount}
                     type="button"
                     onClick={() => setAmount(presetAmount)}
-                    className={`p-2 rounded border-2 font-semibold transition-colors ${
+                    className={`p-4 rounded-lg border-3 font-bold transition-all duration-200 transform hover:scale-105 ${
                       amount === presetAmount
-                        ? 'border-primary-600 bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
+                        ? 'border-primary-600 bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg'
+                        : 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:border-primary-400 dark:hover:border-primary-500'
                     }`}
                   >
-                    ₹{presetAmount}
+                    ₹{presetAmount.toLocaleString()}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Donation Purpose</label>
+            {/* Donation Purpose */}
+            <div className="mb-10">
+              <label className="text-xl font-bold text-gray-900 dark:text-white mb-4 block">Donation Purpose</label>
               <select
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
+                className="w-full px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-lg font-semibold focus:border-primary-600 focus:outline-none transition-colors"
               >
-                <option value="education">Education</option>
-                <option value="food">Food & Community</option>
-                <option value="health">Health & Wellness</option>
+                <option value="education">🎓 Education - Books, Libraries & Scholarships</option>
+                <option value="food">🍲 Food & Community - Meals & Support Programs</option>
+                <option value="health">⚕️ Health & Wellness - Medical Camps & Care</option>
               </select>
             </div>
 
-            <div className="mb-6 grid md:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="Your Name"
-                value={donorInfo.name}
-                onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
-                className="px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-              />
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={donorInfo.email}
-                onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
-                className="px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-              />
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                value={donorInfo.phone}
-                onChange={(e) => setDonorInfo({ ...donorInfo, phone: e.target.value })}
-                className="px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-              />
+            {/* Donor Information */}
+            <div className="mb-10">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Information</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={donorInfo.name}
+                  onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={donorInfo.email}
+                  onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  required
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  value={donorInfo.phone}
+                  onChange={(e) => setDonorInfo({ ...donorInfo, phone: e.target.value })}
+                  className="px-5 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-base focus:border-primary-600 focus:outline-none transition-colors"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Payment Method</label>
+            {/* Payment Method */}
+            <div className="mb-12">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Choose Payment Method</h3>
               <div className="grid grid-cols-3 gap-4">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-4 border-2 rounded-lg transition-colors ${
+                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center ${
                     paymentMethod === 'upi'
-                      ? 'border-primary-600 bg-primary-50 dark:bg-primary-900'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
                   }`}
                 >
-                  <Smartphone className="w-8 h-8 mx-auto mb-2 text-primary-600" />
-                  <div className="text-sm font-medium">UPI</div>
+                  <Smartphone className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <div className="font-bold text-gray-900 dark:text-white">UPI</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Instant & Secure</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('razorpay')}
-                  className={`p-4 border-2 rounded-lg transition-colors ${
+                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center relative ${
                     paymentMethod === 'razorpay'
-                      ? 'border-primary-600 bg-primary-50 dark:bg-primary-900'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
                   }`}
                 >
-                  <CreditCard className="w-8 h-8 mx-auto mb-2 text-primary-600" />
-                  <div className="text-sm font-medium">Razorpay</div>
+                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded">POPULAR</span>
+                  <CreditCard className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <div className="font-bold text-gray-900 dark:text-white">Razorpay</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Card & Wallet</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('stripe')}
-                  className={`p-4 border-2 rounded-lg transition-colors ${
+                  className={`p-6 border-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-center ${
                     paymentMethod === 'stripe'
-                      ? 'border-primary-600 bg-primary-50 dark:bg-primary-900'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
+                      ? 'border-primary-600 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 shadow-lg'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-700'
                   }`}
                 >
-                  <Globe className="w-8 h-8 mx-auto mb-2 text-primary-600" />
-                  <div className="text-sm font-medium">Stripe</div>
+                  <Globe className="w-10 h-10 mx-auto mb-3 text-primary-600" />
+                  <div className="font-bold text-gray-900 dark:text-white">Stripe</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">International</div>
                 </button>
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors text-lg"
+              className="w-full bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 hover:from-primary-700 hover:via-primary-600 hover:to-primary-800 text-white px-8 py-5 rounded-xl font-bold text-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3"
             >
+              <Heart className="w-7 h-7" />
               Donate ₹{amount.toLocaleString()}
             </button>
+
+            {/* Trust Badge */}
+            <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg text-center border-l-4 border-blue-500">
+              <p className="text-sm text-blue-900 dark:text-blue-100">
+                <span className="font-bold">✓ 100% Secure & Transparent</span> - Your donation is tax-deductible and goes directly to help our communities.
+              </p>
+            </div>
           </form>
         </section>
+
 
         {/* Our Generous Donors */}
         <section className="mb-12">

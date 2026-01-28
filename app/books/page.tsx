@@ -170,7 +170,72 @@ export default function Books() {
           </div>
         </section>
 
-        {/* Donate Form Modal */}
+                {/* Book Issuance Records */}
+        <section className="mb-16">
+          <h2 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white flex items-center">
+            <BookOpen className="w-10 h-10 mr-3 text-primary-600" />
+            Book Issuance Records
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: 'Keshav Kumar Mandal', patronId: 'APCLIB/08', issueDate: '01 March 2025', booksIssued: 8, accNos: 'APC 1,4,7,10,13,16,19,22' },
+              { name: 'Jyoti Kumari', patronId: 'APCLIB/09', issueDate: '01 March 2025', booksIssued: 11, accNos: 'APC 2,5,8,11,14,17,20,23,26,29,32' },
+              { name: 'Saraswati Kumari', patronId: 'APCLIB/10', issueDate: '01 March 2025', booksIssued: 11, accNos: 'APC 3,6,9,12,15,18,21,24,27,30,33' },
+              { name: 'Ganga Kumari', patronId: 'APCLIB/12', issueDate: '16 May 2025', booksIssued: 4, accNos: 'APC 36,39,42,45' },
+              { name: 'Santoshi Kumari', patronId: 'APCLIB/14', issueDate: '16 May 2025', booksIssued: 4, accNos: 'APC 37,40,43,46' },
+              { name: 'Manisha Kumari', patronId: 'APCLIB/13', issueDate: '16 May 2025', booksIssued: 4, accNos: 'APC 35,38,41,44' },
+              { name: 'Babita Kumari', patronId: 'APCLIB/11', issueDate: '16 May 2025', booksIssued: 2, accNos: 'APC 34,47' },
+            ].map((patron, index) => (
+              <div
+                key={index}
+                className="group relative h-full"
+              >
+                <div className="glass-card p-6 rounded-xl backdrop-blur-lg border border-white/20 h-full flex flex-col overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:via-primary-500/5 group-hover:to-primary-600/10 transition-all duration-500 rounded-xl -z-10"></div>
+                  
+                  <div className="text-5xl mb-4 text-center">📖</div>
+                  
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                    {patron.name}
+                  </h3>
+                  
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-3"></div>
+                  
+                  <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2 flex-grow">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">Patron ID:</span>
+                      <span className="text-primary-600 dark:text-primary-400 font-mono">{patron.patronId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">Issue Date:</span>
+                      <span className="text-gray-700 dark:text-gray-300">{patron.issueDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">Books Issued:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">{patron.booksIssued}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent my-3"></div>
+                  
+                  <div className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300 block mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">Accession Numbers:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {patron.accNos.split(',').map((acc, i) => (
+                        <span key={i} className="bg-primary-100/50 dark:bg-primary-900/50 px-2 py-1 rounded text-primary-700 dark:text-primary-300 font-mono text-xs">
+                          {acc.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        
+{/* Donate Form Modal */}
         {showDonateForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">

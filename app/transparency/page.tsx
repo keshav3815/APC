@@ -155,43 +155,6 @@ export default function Transparency() {
           </div>
         </Link>
 
-        {/* Annual Reports */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">
-            <FileText className="w-8 h-8 text-primary-600" />
-            Annual Reports
-          </h2>
-
-          <div className="grid gap-6">
-            {reports.map((report, index) => (
-              <div key={index} className="glass-card p-6 rounded-lg">
-                <div className="grid md:grid-cols-5 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Year</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{report.year}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Donations</p>
-                    <p className="text-2xl font-bold text-green-600">₹{report.donations.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expenses</p>
-                    <p className="text-2xl font-bold text-red-600">₹{report.expenses.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Balance</p>
-                    <p className="text-2xl font-bold text-primary-600">₹{report.balance.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Beneficiaries</p>
-                    <p className="text-2xl font-bold text-blue-600">{report.beneficiaries.toLocaleString()}+</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Our Commitment */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Our Commitment to Transparency</h2>
