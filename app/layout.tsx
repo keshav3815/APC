@@ -12,7 +12,12 @@ export const metadata: Metadata = {
   title: 'APC - Community Hub',
   description: 'Join APC community - Books, Events, Donations, and More',
   icons: {
-    icon: '/images/favicon.svg',
+    icon: [
+      { url: '/images/favicon.svg', type: 'image/svg+xml' },
+      { url: '/images/favicon.svg', sizes: '32x32', type: 'image/svg+xml' },
+    ],
+    shortcut: '/images/favicon.svg',
+    apple: '/images/favicon.svg',
   },
 }
 

@@ -20,7 +20,10 @@ interface PendingMember {
 
 export default function MembersApproval() {
   const [pendingMembers, setPendingMembers] = useState<PendingMember[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useStateGET https://apc.freequademy.com/ 404 (Not Found)
+Navigated to https://apc.freequademy.com/
+apc.freequademy.com/:1  GET https://apc.freequademy.com/ 404 (Not Found)
+Navigated to https://apc.freequademy.com/(true)
   const [processing, setProcessing] = useState<string | null>(null)
   const supabase = createClient()
 
