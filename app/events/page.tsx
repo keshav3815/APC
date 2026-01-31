@@ -1,84 +1,25 @@
 'use client'
 
-import { useState } from 'react'
-import { Calendar, MapPin, Users, Clock, CheckCircle, Image as ImageIcon, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Calendar, MapPin, Users, Clock, CheckCircle, Image as ImageIcon, ArrowRight, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
 
 interface Event {
-  id: number
+  id: string
   title: string
-  date: string
-  location: string
-  type: 'workshop' | 'donation-drive' | 'seminar'
   description: string
-  registered: number
-  capacity: number
+  event_type: 'workshop' | 'donation-drive' | 'seminar' | 'meetup' | 'other'
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
+  start_date: string
+  end_date: string
+  location: string
+  max_participants: number
+  current_participants: number
+  registration_deadline: string
+  outcome?: string
+  image_url?: string
 }
-
-const upcomingEvents: Event[] = [
-  {
-    id: 1,
-    title: 'Web Development Workshop',
-    date: '2024-02-15',
-    location: 'Mumbai',
-    type: 'workshop',
-    description: 'Learn modern web development technologies',
-    registered: 45,
-    capacity: 50,
-  },
-  {
-    id: 2,
-    title: 'Book Donation Drive',
-    date: '2024-02-20',
-    location: 'Delhi',
-    type: 'donation-drive',
-    description: 'Collect books for underprivileged students',
-    registered: 120,
-    capacity: 200,
-  },
-  {
-    id: 3,
-    title: 'Career Guidance Seminar',
-    date: '2024-02-25',
-    location: 'Bangalore',
-    type: 'seminar',
-    description: 'Expert advice on career planning',
-    registered: 80,
-    capacity: 100,
-  },
-]
-
-const completedEvents = [
-  {
-    id: 1,
-    title: 'Education Fair 2024',
-    date: '2024-01-10',
-    location: 'Hyderabad',
-    type: 'seminar',
-    outcome: '500+ students attended',
-    stats: '50+ colleges participated',
-    images: 12,
-  },
-  {
-    id: 2,
-    title: 'Winter Book Drive',
-    date: '2023-12-15',
-    location: 'Pune',
-    type: 'donation-drive',
-    outcome: '2000+ books collected',
-    stats: '300+ donors participated',
-    images: 8,
-  },
-  {
-    id: 3,
-    title: 'Digital Skills Workshop',
-    date: '2023-11-20',
-    location: 'Chennai',
-    type: 'workshop',
-    outcome: '150+ participants trained',
-    stats: '20+ mentors volunteered',
-    images: 15,
-  },
-]
 
 export default function Events() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
@@ -87,14 +28,101 @@ export default function Events() {
     email: '',
     phone: '',
   })
+  const [loading, setLoading] = useState(false)
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
+  const [completedEvents, setCompletedEvents] = useState<Event[]>([])
+  const [pageLoading, setPageLoading] = useState(true)
+  const supabase = createClient()
 
-  const handleRegister = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
+  const fetchEvents = async () => {
+    try {
+      // Fetch upcoming events
+      const { data: upcoming, error: upError } = await supabase
+        .from('events')
+        .select('*')
+        .in('status', ['upcoming', 'ongoing'])
+        .order('start_date', { ascending: true })
+
+      if (upError) throw upError
+
+      // Fetch completed events
+      const { data: completed, error: compError } = await supabase
+        .from('events')
+        .select('*')
+        .eq('status', 'completed')
+        .order('start_date', { ascending: false })
+        .limit(6)
+
+      if (compError) throw compError
+
+      setUpcomingEvents(upcoming || [])
+      setCompletedEvents(completed || [])
+    } catch (error) {
+      console.error('Error fetching events:', error)
+    } finally {
+      setPageLoading(false)
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (selectedEvent) {
-      alert(`Thank you for registering! We'll send confirmation details to ${registrationData.email}`)
+    if (!selectedEvent) return
+
+    setLoading(true)
+    try {
+      // Check if already registered
+      const { data: existing } = await supabase
+        .from('event_registrations')
+        .select('id')
+        .eq('event_id', selectedEvent.id)
+        .eq('email', registrationData.email)
+        .single()
+
+      if (existing) {
+        toast.error('You are already registered for this event')
+        return
+      }
+
+      // Create registration
+      const { error } = await supabase
+        .from('event_registrations')
+        .insert({
+          event_id: selectedEvent.id,
+          name: registrationData.name,
+          email: registrationData.email,
+          phone: registrationData.phone,
+          status: 'registered'
+        })
+
+      if (error) throw error
+
+      // Update participant count
+      await supabase
+        .from('events')
+        .update({ current_participants: (selectedEvent.current_participants || 0) + 1 })
+        .eq('id', selectedEvent.id)
+
+      toast.success(`Thank you for registering! We'll send confirmation details to ${registrationData.email}`)
       setSelectedEvent(null)
       setRegistrationData({ name: '', email: '', phone: '' })
+      fetchEvents() // Refresh events
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to register. Please try again.')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      </div>
+    )
   }
 
   return (
@@ -116,56 +144,63 @@ export default function Events() {
             <Calendar className="w-8 h-8 mr-3 text-primary-600" />
             Upcoming Events
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    event.type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                    event.type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                    'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                  }`}>
-                    {event.type.replace('-', ' ').toUpperCase()}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {event.registered}/{event.capacity}
-                  </span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">{event.description}</p>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {event.location}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4 mr-2" />
-                    {event.registered} registered
-                  </div>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
-                  <div
-                    className="bg-primary-600 h-2 rounded-full"
-                    style={{ width: `${(event.registered / event.capacity) * 100}%` }}
-                  />
-                </div>
-                <button
-                  onClick={() => setSelectedEvent(event)}
-                  className="w-full bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-                  disabled={event.registered >= event.capacity}
+          {upcomingEvents.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md text-center">
+              <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 dark:text-gray-400">No upcoming events at the moment. Check back soon!</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {upcomingEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 >
-                  {event.registered >= event.capacity ? 'Full' : 'Register Now'}
-                </button>
-              </div>
-            ))}
-          </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      event.event_type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                      event.event_type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                    }`}>
+                      {event.event_type.replace('-', ' ').toUpperCase()}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {event.current_participants || 0}/{event.max_participants}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">{event.description}</p>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {event.location}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                      <Users className="w-4 h-4 mr-2" />
+                      {event.current_participants || 0} registered
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
+                    <div
+                      className="bg-primary-600 h-2 rounded-full"
+                      style={{ width: `${((event.current_participants || 0) / event.max_participants) * 100}%` }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => setSelectedEvent(event)}
+                    className="w-full bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
+                    disabled={(event.current_participants || 0) >= event.max_participants}
+                  >
+                    {(event.current_participants || 0) >= event.max_participants ? 'Full' : 'Register Now'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Calendar View */}
@@ -212,44 +247,49 @@ export default function Events() {
             <CheckCircle className="w-8 h-8 mr-3 text-primary-600" />
             Completed Events
           </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {completedEvents.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    event.type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                    event.type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                    'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                  }`}>
-                    {event.type.replace('-', ' ').toUpperCase()}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(event.date).toLocaleDateString()}
-                  </span>
+          {completedEvents.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md text-center">
+              <CheckCircle className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 dark:text-gray-400">No completed events yet.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              {completedEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      event.event_type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                      event.event_type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                    }`}>
+                      {event.event_type.replace('-', ' ').toUpperCase()}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(event.start_date).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    {event.location}
+                  </div>
+                  {event.outcome && (
+                    <div className="mb-4">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Outcome:</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{event.outcome}</p>
+                    </div>
+                  )}
+                  <div className="mb-4">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Participants:</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{event.current_participants || 0} attended</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {event.location}
-                </div>
-                <div className="mb-4">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Outcome:</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{event.outcome}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Stats:</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{event.stats}</p>
-                </div>
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                  <ImageIcon className="w-4 h-4 mr-2" />
-                  {event.images} photos in gallery
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Registration Modal */}
@@ -260,7 +300,7 @@ export default function Events() {
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{selectedEvent.title}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(selectedEvent.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  {new Date(selectedEvent.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{selectedEvent.location}</p>
               </div>
@@ -298,9 +338,17 @@ export default function Events() {
                 <div className="flex gap-4 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                    disabled={loading}
+                    className="flex-1 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 inline-flex items-center justify-center"
                   >
-                    Confirm Registration
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Registering...
+                      </>
+                    ) : (
+                      'Confirm Registration'
+                    )}
                   </button>
                   <button
                     type="button"

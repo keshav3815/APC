@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { Heart, TrendingUp, TrendingDown, Target, Users, CheckCircle, CreditCard, Smartphone, Globe } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Heart, TrendingUp, TrendingDown, Target, Users, CheckCircle, CreditCard, Smartphone, Globe, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
 
 interface Campaign {
-  id: number
+  id: string
   title: string
-  purpose: 'education' | 'food' | 'health'
-  raised: number
-  target: number
+  purpose: string
+  raised_amount: number
+  target_amount: number
   description: string
+  status: string
 }
 
 interface Donor {
@@ -17,84 +20,12 @@ interface Donor {
   amount: number
 }
 
-const campaigns: Campaign[] = [
-  {
-    id: 1,
-    title: 'Education for All',
-    purpose: 'education',
-    raised: 25000,
-    target: 50000,
-    description: 'Support underprivileged students with books and educational materials. Build 10 libraries in rural areas.',
-  },
-  {
-    id: 2,
-    title: 'Community Support Fund',
-    purpose: 'food',
-    raised: 18000,
-    target: 40000,
-    description: 'Provide nutritious meals and food security to families in need during emergencies.',
-  },
-  {
-    id: 3,
-    title: 'Health & Wellness Initiative',
-    purpose: 'health',
-    raised: 12538,
-    target: 35000,
-    description: 'Medical camps, health checkups, and assistance for low-income families in rural areas.',
-  },
-]
-
-const donors: Donor[] = [
-  { name: 'Mr & Mrs Ashish Kr Singh Ji', amount: 28508 },
-  { name: 'Prem Shanker Jha ji', amount: 2502 },
-  { name: 'NMMSS Shivir 2022 Stud. Reg.', amount: 2315 },
-  { name: 'Shiv Kr Singh Ji', amount: 2100 },
-  { name: 'S Kumar Singh Ji', amount: 2000 },
-  { name: 'Vivek Kr Raut Ji', amount: 1500 },
-  { name: 'Mintu kr jha ji', amount: 1500 },
-  { name: 'Rajeev Kr Singh Ji', amount: 1500 },
-  { name: 'APC Bal. Abhay', amount: 1204 },
-  { name: 'Ashok kr Sah ji', amount: 1101 },
-  { name: 'Priya Jha ji', amount: 1100 },
-  { name: 'Ramesh Choudhry ji', amount: 1100 },
-  { name: 'Kanhaiya Mandal Ji', amount: 1001 },
-  { name: 'Durganand Mukhiya', amount: 1001 },
-  { name: 'Keshav Choudhry Ji', amount: 1001 },
-  { name: 'Alok Ranjan Jha ji', amount: 1000 },
-  { name: 'APC Bal. Rajan', amount: 602 },
-  { name: 'CA Rakesh Pathak Ji', amount: 501 },
-  { name: 'R Kumar Ji', amount: 501 },
-  { name: 'Satosh Yadav Ji', amount: 501 },
-  { name: 'S Kumar Ji', amount: 501 },
-  { name: 'Raja Kr Jha ji', amount: 500 },
-  { name: 'Sanjay Singh Sir', amount: 500 },
-  { name: 'Govind Mishra ji', amount: 500 },
-  { name: 'Sanjay Mishra Ji', amount: 500 },
-  { name: 'Ranjay Yadav Ji', amount: 251 },
-  { name: 'NMMSS 3 Student Reg. September', amount: 150 },
-  { name: 'Rajan Kumar Singh Ji', amount: 602 },
-]
-
-const impactStories = [
-  {
-    id: 1,
-    name: 'Rahul\'s Story',
-    text: 'Thanks to APC donations, I was able to complete my engineering degree. The scholarship and books made all the difference.',
-    category: 'education',
-  },
-  {
-    id: 2,
-    name: 'Community Kitchen Success',
-    text: 'Our food drive helped feed 500+ families during the pandemic. Your donations made this possible.',
-    category: 'food',
-  },
-  {
-    id: 3,
-    name: 'Medical Camp Impact',
-    text: 'Free health checkups for 300+ people in rural areas. Early detection saved many lives.',
-    category: 'health',
-  },
-]
+interface Stats {
+  total_income?: number
+  total_expenses?: number
+  total_donated?: number
+  active_donors?: number
+}
 
 export default function Donations() {
   const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
@@ -102,16 +33,99 @@ export default function Donations() {
   const [purpose, setPurpose] = useState('education')
   const [donorInfo, setDonorInfo] = useState({ name: '', email: '', phone: '' })
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay' | 'stripe'>('razorpay')
-  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [donors, setDonors] = useState<Donor[]>([])
+  const [stats, setStats] = useState<Stats>({})
+  const [pageLoading, setPageLoading] = useState(true)
+  const supabase = createClient()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000)
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      // Fetch campaigns
+      const { data: campaignsData } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+
+      if (campaignsData) setCampaigns(campaignsData)
+
+      // Fetch stats
+      const { data: statsData } = await supabase
+        .from('stats')
+        .select('*')
+        .single()
+
+      if (statsData) setStats(statsData)
+
+      // Fetch top donors
+      const { data: donorsData } = await supabase
+        .from('members')
+        .select('name, donation_amount')
+        .eq('member_type', 'donor')
+        .order('donation_amount', { ascending: false })
+        .limit(20)
+
+      if (donorsData) {
+        setDonors(donorsData.map(d => ({ name: d.name, amount: d.donation_amount || 0 })))
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setPageLoading(false)
+    }
   }
 
-  const totalDonated = donors.reduce((sum, donor) => sum + donor.amount, 0)
-  const activeDonors = donors.filter(d => d.amount > 0).length
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!donorInfo.name || !donorInfo.email || !donorInfo.phone) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .insert({
+          donor_name: donorInfo.name,
+          donor_email: donorInfo.email,
+          donor_phone: donorInfo.phone,
+          amount: amount,
+          donation_type: donationType,
+          purpose: purpose,
+          payment_method: paymentMethod,
+          status: 'pending'
+        })
+
+      if (error) throw error
+
+      toast.success('Thank you for your donation! You will be redirected to payment.')
+      setDonorInfo({ name: '', email: '', phone: '' })
+      setAmount(500)
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to process donation. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const totalDonated = stats.total_donated || donors.reduce((sum, donor) => sum + donor.amount, 0)
+  const activeDonors = stats.active_donors || donors.filter(d => d.amount > 0).length
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-blue-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20">
@@ -136,13 +150,13 @@ export default function Donations() {
           <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-primary-500/0 group-hover:from-green-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
             <TrendingUp className="w-12 h-12 mb-3 text-green-600 group-hover:scale-110 transition-transform duration-300" />
-            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹55,538</div>
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹{(stats.total_income || 55538).toLocaleString()}</div>
             <div className="text-gray-600 dark:text-gray-400 font-medium">Total Income</div>
           </div>
           <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
             <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-primary-500/0 group-hover:from-red-500/5 group-hover:to-primary-500/10 rounded-2xl transition-all duration-300"></div>
             <TrendingDown className="w-12 h-12 mb-3 text-red-600 group-hover:scale-110 transition-transform duration-300" />
-            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹41,214</div>
+            <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">₹{(stats.total_expenses || 41214).toLocaleString()}</div>
             <div className="text-gray-600 dark:text-gray-400 font-medium">Total Expenses</div>
           </div>
           <div className="group relative bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700">
@@ -188,28 +202,35 @@ export default function Donations() {
         {/* Active Campaigns */}
         <div className="mb-16">
           <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Active Campaigns</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {campaigns.map((campaign) => (
-              <div key={campaign.id} className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{campaign.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">{campaign.description}</p>
-                <div className="mb-6">
-                  <div className="flex justify-between text-sm mb-3">
-                    <span className="font-bold text-gray-900 dark:text-white">₹{campaign.raised.toLocaleString()}</span>
-                    <span className="text-gray-600 dark:text-gray-400">of ₹{campaign.target.toLocaleString()}</span>
+          {campaigns.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl text-center">
+              <Target className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 dark:text-gray-400">No active campaigns at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              {campaigns.map((campaign) => (
+                <div key={campaign.id} className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{campaign.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">{campaign.description}</p>
+                  <div className="mb-6">
+                    <div className="flex justify-between text-sm mb-3">
+                      <span className="font-bold text-gray-900 dark:text-white">₹{(campaign.raised_amount || 0).toLocaleString()}</span>
+                      <span className="text-gray-600 dark:text-gray-400">of ₹{(campaign.target_amount || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 h-3 rounded-full transition-all duration-500 shadow-lg shadow-primary-500/30"
+                        style={{ width: `${((campaign.raised_amount || 0) / (campaign.target_amount || 1)) * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-sm text-primary-600 dark:text-primary-400 font-semibold mt-2">{Math.round(((campaign.raised_amount || 0) / (campaign.target_amount || 1)) * 100)}% funded</p>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                    <div
-                      className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 h-3 rounded-full transition-all duration-500 shadow-lg shadow-primary-500/30"
-                      style={{ width: `${(campaign.raised / campaign.target) * 100}%` }}
-                    />
-                  </div>
-                  <p className="text-sm text-primary-600 dark:text-primary-400 font-semibold mt-2">{Math.round((campaign.raised / campaign.target) * 100)}% funded</p>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Donation Form */}
@@ -395,10 +416,20 @@ export default function Donations() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary-600 via-primary-500 to-red-600 hover:from-primary-700 hover:via-primary-600 hover:to-red-700 text-white px-8 py-6 rounded-2xl font-bold text-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-primary-600/40 active:scale-95 flex items-center justify-center gap-3 group"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-primary-600 via-primary-500 to-red-600 hover:from-primary-700 hover:via-primary-600 hover:to-red-700 text-white px-8 py-6 rounded-2xl font-bold text-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-primary-600/40 active:scale-95 flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              <Heart className="w-8 h-8 group-hover:animate-pulse" />
-              Donate ₹{amount.toLocaleString()}
+              {loading ? (
+                <>
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Heart className="w-8 h-8 group-hover:animate-pulse" />
+                  Donate ₹{amount.toLocaleString()}
+                </>
+              )}
             </button>
 
             {/* Trust Badge */}

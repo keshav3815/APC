@@ -1,7 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { Mail, Phone, MapPin, Send, Facebook, Twitter, Instagram, Linkedin, ArrowRight, Clock, MessageSquare } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Mail, Phone, MapPin, Send, Facebook, Instagram, Clock, MessageSquare, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
+
+interface SiteSettings {
+  contact_email: string
+  contact_phone: string
+  address: string
+  social_links: {
+    facebook?: string
+    instagram?: string
+    twitter?: string
+    linkedin?: string
+  }
+}
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -11,11 +25,55 @@ export default function Contact() {
     subject: '',
     message: '',
   })
+  const [loading, setLoading] = useState(false)
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const supabase = createClient()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchSettings()
+  }, [])
+
+  const fetchSettings = async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('*')
+      .single()
+    
+    if (data) {
+      setSettings({
+        contact_email: data.contact_email || 'contact@apc.org',
+        contact_phone: data.contact_phone || '+91 1234567890',
+        address: data.address || '123 Community Street, Mumbai, Maharashtra 400001, India',
+        social_links: data.social_links || {}
+      })
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert('Thank you for your message! We will get back to you soon.')
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+    setLoading(true)
+    
+    try {
+      const { error } = await supabase
+        .from('contact_inquiries')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          subject: formData.subject,
+          message: formData.message,
+          status: 'new'
+        })
+      
+      if (error) throw error
+      
+      toast.success('Thank you for your message! We will get back to you soon.')
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send message. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -52,8 +110,7 @@ export default function Contact() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Email</h3>
-                  <p className="text-gray-700 dark:text-gray-300 mb-2">contact@apc.org</p>
-                  <p className="text-gray-700 dark:text-gray-300">info@apc.org</p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_email || 'contact@apc.org'}</p>
                 </div>
 
                 {/* Phone */}
@@ -62,8 +119,7 @@ export default function Contact() {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Phone</h3>
-                  <p className="text-gray-700 dark:text-gray-300 mb-2">+91 1234567890</p>
-                  <p className="text-gray-700 dark:text-gray-300">+91 9876543210</p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_phone || '+91 1234567890'}</p>
                 </div>
 
                 {/* Address */}
@@ -73,9 +129,7 @@ export default function Contact() {
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Address</h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    123 Community Street<br />
-                    Mumbai, Maharashtra 400001<br />
-                    India
+                    {settings?.address || '123 Community Street, Mumbai, Maharashtra 400001, India'}
                   </p>
                 </div>
 
@@ -168,10 +222,20 @@ export default function Contact() {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-primary-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover-lift transition-all inline-flex items-center justify-center group stagger-item delay-500"
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-primary-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover-lift transition-all inline-flex items-center justify-center group stagger-item delay-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message 
-                    <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message 
+                        <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
                   </button>
                 </form>
 

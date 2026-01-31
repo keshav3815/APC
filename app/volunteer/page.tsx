@@ -1,7 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { Users, Clock, MapPin, Heart, CheckCircle, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Users, Clock, MapPin, Heart, CheckCircle, ArrowRight, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
+
+interface VolunteerOpportunity {
+  id: string
+  title: string
+  description: string
+  time_commitment: string
+  skills_required: string[]
+}
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -14,41 +24,89 @@ export default function Volunteer() {
     availability: '',
     experience: '',
   })
+  const [loading, setLoading] = useState(false)
+  const [opportunities, setOpportunities] = useState<VolunteerOpportunity[]>([])
+  const supabase = createClient()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert('Thank you for your interest in volunteering! We will contact you soon.')
-    setFormData({
-      name: '', email: '', phone: '', city: '', skills: '', interests: '', availability: '', experience: ''
-    })
+  useEffect(() => {
+    fetchOpportunities()
+  }, [])
+
+  const fetchOpportunities = async () => {
+    const { data } = await supabase
+      .from('volunteer_opportunities')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+    
+    if (data && data.length > 0) {
+      setOpportunities(data)
+    } else {
+      // Default opportunities if none in database
+      setOpportunities([
+        {
+          id: '1',
+          title: 'Event Organization',
+          description: 'Help organize and manage community events',
+          time_commitment: '5-10 hours/week',
+          skills_required: ['Event management', 'Communication'],
+        },
+        {
+          id: '2',
+          title: 'Book Distribution',
+          description: 'Coordinate book donations and distributions',
+          time_commitment: '3-5 hours/week',
+          skills_required: ['Logistics', 'Community outreach'],
+        },
+        {
+          id: '3',
+          title: 'Teaching & Mentoring',
+          description: 'Teach or mentor students in various subjects',
+          time_commitment: '4-8 hours/week',
+          skills_required: ['Teaching', 'Subject expertise'],
+        },
+        {
+          id: '4',
+          title: 'Digital Support',
+          description: 'Help with website, social media, and digital initiatives',
+          time_commitment: '5-10 hours/week',
+          skills_required: ['Digital skills', 'Content creation'],
+        },
+      ])
+    }
   }
 
-  const opportunities = [
-    {
-      title: 'Event Organization',
-      description: 'Help organize and manage community events',
-      time: '5-10 hours/week',
-      skills: 'Event management, Communication',
-    },
-    {
-      title: 'Book Distribution',
-      description: 'Coordinate book donations and distributions',
-      time: '3-5 hours/week',
-      skills: 'Logistics, Community outreach',
-    },
-    {
-      title: 'Teaching & Mentoring',
-      description: 'Teach or mentor students in various subjects',
-      time: '4-8 hours/week',
-      skills: 'Teaching, Subject expertise',
-    },
-    {
-      title: 'Digital Support',
-      description: 'Help with website, social media, and digital initiatives',
-      time: '5-10 hours/week',
-      skills: 'Digital skills, Content creation',
-    },
-  ]
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const { error } = await supabase
+        .from('volunteer_applications')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          city: formData.city,
+          skills: formData.skills.split(',').map(s => s.trim()),
+          interests: formData.interests.split(',').map(i => i.trim()),
+          availability: formData.availability,
+          experience: formData.experience || null,
+          status: 'pending'
+        })
+
+      if (error) throw error
+
+      toast.success('Thank you for your interest in volunteering! We will contact you soon.')
+      setFormData({
+        name: '', email: '', phone: '', city: '', skills: '', interests: '', availability: '', experience: ''
+      })
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to submit application. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
@@ -95,19 +153,19 @@ export default function Volunteer() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Volunteer Opportunities</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {opportunities.map((opp, index) => (
+              {opportunities.map((opp) => (
                 <div
-                  key={index}
+                  key={opp.id}
                   className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
                 >
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{opp.title}</h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">{opp.description}</p>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
                     <Clock className="w-4 h-4 mr-2" />
-                    {opp.time}
+                    {opp.time_commitment}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <strong>Skills needed:</strong> {opp.skills}
+                    <strong>Skills needed:</strong> {Array.isArray(opp.skills_required) ? opp.skills_required.join(', ') : opp.skills_required}
                   </div>
                 </div>
               ))}
@@ -205,9 +263,19 @@ export default function Volunteer() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center justify-center"
+                disabled={loading}
+                className="w-full bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Application <ArrowRight className="ml-2 w-5 h-5" />
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    Submit Application <ArrowRight className="ml-2 w-5 h-5" />
+                  </>
+                )}
               </button>
             </form>
           </section>

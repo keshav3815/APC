@@ -1,37 +1,16 @@
 'use client'
 
-import { useState } from 'react'
-import { TrendingDown, Filter, Download, BarChart3 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { TrendingDown, Filter, Download, BarChart3, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Expense {
-  id: number
+  id: string
   description: string
   amount: number
   category: 'education' | 'events' | 'operations' | 'assessment' | 'infrastructure' | 'miscellaneous'
   date: string
 }
-
-const expenses: Expense[] = [
-  { id: 1, description: 'NMMSS Sept 2022 (Chalk, Attend. Prize)', amount: 110, category: 'education', date: 'Sept 2022' },
-  { id: 2, description: 'NMMSS Oct 2022 (Attend. Prize, Class Test)', amount: 350, category: 'education', date: 'Oct 2022' },
-  { id: 3, description: 'NMMSS Nov 2022 (Application, Attendance, Chalk)', amount: 684, category: 'education', date: 'Nov 2022' },
-  { id: 4, description: 'NMMSS January 2023 (Test, Admit card, Attend. Prize)', amount: 756, category: 'education', date: 'Jan 2023' },
-  { id: 5, description: 'NMMSS Dec 2022 (Test, Attendance, Chalk)', amount: 465, category: 'education', date: 'Dec 2022' },
-  { id: 6, description: 'NMMSS Aug. 2022 (Test, Register, Chalk)', amount: 550, category: 'education', date: 'Aug 2022' },
-  { id: 7, description: 'Medal & Certificate (4) Jan 2026', amount: 140, category: 'events', date: 'Jan 2026' },
-  { id: 8, description: 'Lucent GK Book (10) Prize Jan 2026', amount: 2160, category: 'education', date: 'Jan 2026' },
-  { id: 9, description: 'Lucent Book 1p 10th topper 2021', amount: 130, category: 'education', date: '2021' },
-  { id: 10, description: 'Jild Book 10p', amount: 750, category: 'education', date: 'Unknown' },
-  { id: 11, description: 'Gadi Bhada Mithilesh ji', amount: 400, category: 'infrastructure', date: 'Unknown' },
-  { id: 12, description: 'Flipkart Sociology Book UGC NET Paper1', amount: 322, category: 'education', date: 'Unknown' },
-  { id: 13, description: 'Dopta 21p', amount: 4830, category: 'miscellaneous', date: 'Unknown' },
-  { id: 14, description: 'Chair, Mat Param ji', amount: 700, category: 'infrastructure', date: 'Unknown' },
-  { id: 15, description: 'Cash Prize & Envelope (04) Jan 2026', amount: 3144, category: 'events', date: 'Jan 2026' },
-  { id: 16, description: 'Test Question, Answer Sheets, Prize, HM Sir Felicitation (5/1/2025)', amount: 4097, category: 'assessment', date: 'Jan 2025' },
-  { id: 17, description: '33 Books of 10th syllabus and one stamp of APC Made by Sumit', amount: 3500, category: 'education', date: 'Unknown' },
-  { id: 18, description: '15 Aug 2022 (Test, Prize, Program)', amount: 1435, category: 'events', date: 'Aug 2022' },
-  { id: 19, description: '12 Books History, Geography, Economic, Polity 11 May 2025', amount: 430, category: 'education', date: 'May 2025' },
-]
 
 const categoryColors: Record<string, { bg: string; text: string; icon: string }> = {
   education: { bg: 'bg-blue-100 dark:bg-blue-900', text: 'text-blue-800 dark:text-blue-200', icon: '📚' },
@@ -45,6 +24,39 @@ const categoryColors: Record<string, { bg: string; text: string; icon: string }>
 export default function Expenses() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const supabase = createClient()
+
+  useEffect(() => {
+    fetchExpenses()
+  }, [])
+
+  const fetchExpenses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('type', 'expense')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      if (data && data.length > 0) {
+        setExpenses(data.map(e => ({
+          id: e.id,
+          description: e.description,
+          amount: e.amount,
+          category: e.category || 'miscellaneous',
+          date: e.date || new Date(e.created_at).toLocaleDateString()
+        })))
+      }
+    } catch (error) {
+      console.error('Error fetching expenses:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesCategory = !selectedCategory || expense.category === selectedCategory
@@ -61,6 +73,14 @@ export default function Expenses() {
       expenses.filter((e) => e.category === cat).reduce((sum, e) => sum + e.amount, 0),
     ])
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pt-20">
@@ -89,8 +109,8 @@ export default function Expenses() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Avg. Transaction</h3>
               <BarChart3 className="w-8 h-8 text-primary-600" />
             </div>
-            <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2">₹{Math.round(totalExpenses / expenses.length).toLocaleString()}</div>
-            <p className="text-gray-600 dark:text-gray-400">{(totalExpenses / expenses.length).toFixed(2)} per transaction</p>
+            <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2">₹{expenses.length > 0 ? Math.round(totalExpenses / expenses.length).toLocaleString() : 0}</div>
+            <p className="text-gray-600 dark:text-gray-400">{expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'} per transaction</p>
           </div>
         </div>
 
