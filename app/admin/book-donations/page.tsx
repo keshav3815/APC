@@ -64,7 +64,11 @@ export default function AdminBookDonationsPage() {
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      const updateData: any = { status }
+      const updateData: {
+        status: string
+        received_at?: string
+        received_by?: string
+      } = { status }
       
       if (status === 'received') {
         const { data: { user } } = await supabase.auth.getUser()
