@@ -95,17 +95,17 @@ export default function AdminAnalyticsPage() {
       ])
 
       // Process users data
-      const users = usersData.data || []
+      const users = (usersData.data || []) as Array<{ id: string; role: string; created_at: string }>
       const thisMonthUsers = users.filter(u => 
         new Date(u.created_at) >= new Date(monthStart) && 
         new Date(u.created_at) <= new Date(monthEnd)
       )
 
       // Process events data
-      const events = eventsData.data || []
+      const events = (eventsData.data || []) as Array<{ id: string; status: string }>
       
       // Process donations data
-      const donations = donationsData.data || []
+      const donations = (donationsData.data || []) as Array<{ id: string; amount: number; status: string; created_at: string }>
       const completedDonations = donations.filter(d => d.status === 'completed')
       const totalAmount = completedDonations.reduce((sum, d) => sum + (d.amount || 0), 0)
       const thisMonthDonations = donations.filter(d =>
@@ -114,15 +114,15 @@ export default function AdminAnalyticsPage() {
       )
 
       // Process library data
-      const books = booksData.data || []
-      const patrons = patronsData.data || []
-      const issues = issuesData.data || []
+      const books = (booksData.data || []) as Array<{ id: string; status: string }>
+      const patrons = (patronsData.data || []) as Array<{ id: string }>
+      const issues = (issuesData.data || []) as Array<{ id: string; status: string }>
 
       // Process volunteers data
-      const volunteers = volunteersData.data || []
+      const volunteers = (volunteersData.data || []) as Array<{ id: string; status: string }>
 
       // Process contacts data
-      const contacts = contactsData.data || []
+      const contacts = (contactsData.data || []) as Array<{ id: string; status: string; created_at: string }>
       const recentContacts = contacts.filter(c =>
         new Date(c.created_at) >= new Date(startDate)
       )
