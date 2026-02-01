@@ -33,6 +33,7 @@ interface AuthContextType {
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: Error | null }>
   updatePassword: (newPassword: string) => Promise<{ error: Error | null }>
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>
   refreshProfile: () => Promise<void>
   isAdmin: boolean
   isLibrarian: boolean
@@ -111,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      async (event: any, currentSession: any) => {
         if (!mounted) return
 
         setSession(currentSession)
@@ -195,6 +196,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const updateProfile = async (updates: Partial<Profile>) => {
+    try {
+      if (!user?.id) {
+        return { error: new Error('No user logged in') }
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+
+      if (error) {
+        return { error: error as Error }
+      }
+
+      await refreshProfile()
+      return { error: null }
+    } catch (err) {
+      return { error: err as Error }
+    }
+  }
+
   const isAdmin = profile?.role === 'admin'
   const isLibrarian = profile?.role === 'librarian'
   const isUser = profile?.role === 'user' || !profile?.role
@@ -214,6 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
     resetPassword,
     updatePassword,
+    updateProfile,
     refreshProfile,
     isAdmin,
     isLibrarian,

@@ -218,7 +218,7 @@ export default function Events() {
               {Array.from({ length: 35 }, (_, i) => {
                 const date = i + 1
                 const eventDate = upcomingEvents.find(e => {
-                  const d = new Date(e.date).getDate()
+                  const d = new Date(e.start_date).getDate()
                   return d === date
                 })
                 return (

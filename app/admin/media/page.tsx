@@ -44,7 +44,7 @@ export default function AdminMediaPage() {
 
       if (error) throw error
 
-      const filesWithUrls = (data || []).map(file => {
+      const filesWithUrls = (data || []).map((file: any) => {
         const { data: urlData } = supabase.storage
           .from('media')
           .getPublicUrl(file.name)

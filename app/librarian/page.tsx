@@ -54,12 +54,12 @@ export default function LibrarianDashboard() {
       ])
 
       const totalBooks = books?.length || 0
-      const availableBooks = books?.filter(b => b.status === 'available').length || 0
-      const borrowedBooks = books?.filter(b => b.status === 'borrowed').length || 0
+      const availableBooks = books?.filter((b: any) => b.status === 'available').length || 0
+      const borrowedBooks = books?.filter((b: any) => b.status === 'borrowed').length || 0
 
       // Find overdue books
       const today = new Date()
-      const overdue = activeIssues?.filter(issue => new Date(issue.due_date) < today) || []
+      const overdue = activeIssues?.filter((issue: any) => new Date(issue.due_date) < today) || []
 
       setStats({
         totalBooks,

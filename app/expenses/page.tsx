@@ -43,7 +43,7 @@ export default function Expenses() {
       if (error) throw error
 
       if (data && data.length > 0) {
-        setExpenses(data.map(e => ({
+        setExpenses(data.map((e: any) => ({
           id: e.id,
           description: e.description,
           amount: e.amount,

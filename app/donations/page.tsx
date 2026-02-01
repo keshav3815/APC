@@ -34,11 +34,18 @@ export default function Donations() {
   const [donorInfo, setDonorInfo] = useState({ name: '', email: '', phone: '' })
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay' | 'stripe'>('razorpay')
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [donors, setDonors] = useState<Donor[]>([])
   const [stats, setStats] = useState<Stats>({})
   const [pageLoading, setPageLoading] = useState(true)
   const supabase = createClient()
+
+  const impactStories = [
+    { id: 1, name: 'Rahul Kumar', text: 'With your support, I completed my education and now work as a software engineer.', category: 'education' },
+    { id: 2, name: 'Priya Singh', text: 'The food program helped my family during difficult times. Forever grateful!', category: 'food' },
+    { id: 3, name: 'Amit Sharma', text: 'Medical assistance saved my mothers life. Thank you for your generosity.', category: 'health' },
+  ]
 
   useEffect(() => {
     fetchData()
@@ -72,7 +79,7 @@ export default function Donations() {
         .limit(20)
 
       if (donorsData) {
-        setDonors(donorsData.map(d => ({ name: d.name, amount: d.donation_amount || 0 })))
+        setDonors(donorsData.map((d: any) => ({ name: d.name, amount: d.donation_amount || 0 })))
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -107,8 +114,10 @@ export default function Donations() {
       if (error) throw error
 
       toast.success('Thank you for your donation! You will be redirected to payment.')
+      setSubmitted(true)
       setDonorInfo({ name: '', email: '', phone: '' })
       setAmount(500)
+      setTimeout(() => setSubmitted(false), 5000)
     } catch (error: any) {
       toast.error(error.message || 'Failed to process donation. Please try again.')
     } finally {

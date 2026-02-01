@@ -266,7 +266,7 @@ export async function getDonationStats() {
   
   if (error) return { data: null, error }
   
-  const totalRaised = donations?.reduce((sum, d) => sum + Number(d.amount), 0) || 0
+  const totalRaised = donations?.reduce((sum: number, d: any) => sum + Number(d.amount), 0) || 0
   const totalDonors = donations?.length || 0
   
   return {
@@ -340,11 +340,11 @@ export async function getBookStats() {
   if (error) return { data: null, error }
   
   const totalBooks = books?.length || 0
-  const availableBooks = books?.filter(b => b.status === 'available').length || 0
-  const borrowedBooks = books?.filter(b => b.status === 'borrowed').length || 0
+  const availableBooks = books?.filter((b: any) => b.status === 'available').length || 0
+  const borrowedBooks = books?.filter((b: any) => b.status === 'borrowed').length || 0
   
   const categoryCount: Record<string, number> = {}
-  books?.forEach(b => {
+  books?.forEach((b: any) => {
     categoryCount[b.category] = (categoryCount[b.category] || 0) + 1
   })
   
@@ -528,8 +528,8 @@ export async function getFinancialSummary() {
   
   if (error) return { data: null, error }
   
-  const totalIncome = transactions?.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0
-  const totalExpense = transactions?.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0) || 0
+  const totalIncome = transactions?.filter((t: any) => t.transaction_type === 'income').reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0
+  const totalExpense = transactions?.filter((t: any) => t.transaction_type === 'expense').reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0
   const balance = totalIncome - totalExpense
   
   return {
@@ -592,7 +592,7 @@ export async function getSiteSettings() {
   if (error) return { data: null, error }
   
   const settings: Record<string, any> = {}
-  data?.forEach(s => {
+  data?.forEach((s: any) => {
     settings[s.key] = s.value
   })
   

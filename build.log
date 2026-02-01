@@ -1,0 +1,23 @@
+
+> apc-website@1.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./app/librarian/page.tsx:57:44
+Type error: Parameter 'b' implicitly has an 'any' type.
+
+[0m [90m 55 |[39m[0m
+[0m [90m 56 |[39m       [36mconst[39m totalBooks [33m=[39m books[33m?[39m[33m.[39mlength [33m||[39m [35m0[39m[0m
+[0m[31m[1m>[22m[39m[90m 57 |[39m       [36mconst[39m availableBooks [33m=[39m books[33m?[39m[33m.[39mfilter(b [33m=>[39m b[33m.[39mstatus [33m===[39m [32m'available'[39m)[33m.[39mlength [33m||[39m [35m0[39m[0m
+[0m [90m    |[39m                                            [31m[1m^[22m[39m[0m
+[0m [90m 58 |[39m       [36mconst[39m borrowedBooks [33m=[39m books[33m?[39m[33m.[39mfilter(b [33m=>[39m b[33m.[39mstatus [33m===[39m [32m'borrowed'[39m)[33m.[39mlength [33m||[39m [35m0[39m[0m
+[0m [90m 59 |[39m[0m
+[0m [90m 60 |[39m       [90m// Find overdue books[39m[0m
+Next.js build worker exited with code: 1 and signal: null

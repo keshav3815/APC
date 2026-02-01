@@ -816,6 +816,59 @@ export interface Database {
           created_at?: string
         }
       }
+      book_donations: {
+        Row: {
+          id: string
+          donor_name: string
+          donor_email: string
+          donor_phone: string
+          book_title: string
+          author: string
+          category: string
+          book_type: string
+          condition: string
+          quantity: number
+          status: string
+          received_by: string | null
+          received_at: string | null
+          notes: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          donor_name: string
+          donor_email: string
+          donor_phone: string
+          book_title: string
+          author: string
+          category: string
+          book_type: string
+          condition: string
+          quantity?: number
+          status?: string
+          received_by?: string | null
+          received_at?: string | null
+          notes?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          donor_name?: string
+          donor_email?: string
+          donor_phone?: string
+          book_title?: string
+          author?: string
+          category?: string
+          book_type?: string
+          condition?: string
+          quantity?: number
+          status?: string
+          received_by?: string | null
+          received_at?: string | null
+          notes?: string
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

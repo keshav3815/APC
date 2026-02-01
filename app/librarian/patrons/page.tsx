@@ -73,7 +73,7 @@ export default function Patrons() {
     if (!error && data) {
       // Fetch issued books count for each patron
       const patronsWithCount = await Promise.all(
-        data.map(async (patron) => {
+        data.map(async (patron: any) => {
           const { count } = await supabase
             .from('book_issues')
             .select('*', { count: 'exact', head: true })
