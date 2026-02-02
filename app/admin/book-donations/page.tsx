@@ -34,6 +34,19 @@ export default function AdminBookDonationsPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedDonation, setSelectedDonation] = useState<BookDonation | null>(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [formData, setFormData] = useState({
+    donor_name: '',
+    donor_email: '',
+    donor_phone: '',
+    book_title: '',
+    author: '',
+    category: 'school',
+    book_type: 'physical',
+    condition: 'good',
+    quantity: 1,
+    notes: ''
+  })
   const supabase = createClient()
 
   useEffect(() => {
@@ -99,6 +112,38 @@ export default function AdminBookDonationsPage() {
       fetchDonations()
     } catch (error: any) {
       toast.error('Failed to save notes')
+    }
+  }
+
+  const handleAddDonation = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const { error } = await supabase
+        .from('book_donations')
+        .insert({
+          ...formData,
+          status: 'pending'
+        })
+
+      if (error) throw error
+      
+      toast.success('Book donation added successfully')
+      setShowAddModal(false)
+      setFormData({
+        donor_name: '',
+        donor_email: '',
+        donor_phone: '',
+        book_title: '',
+        author: '',
+        category: 'school',
+        book_type: 'physical',
+        condition: 'good',
+        quantity: 1,
+        notes: ''
+      })
+      fetchDonations()
+    } catch (error: any) {
+      toast.error('Failed to add donation')
     }
   }
 
@@ -174,13 +219,22 @@ export default function AdminBookDonationsPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Book Donations</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage book donation submissions</p>
         </div>
-        <button
-          onClick={exportToCSV}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-        >
-          <Download className="w-4 h-4" />
-          Export CSV
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={exportToCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            <Package className="w-4 h-4" />
+            Add Book
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -425,9 +479,15 @@ export default function AdminBookDonationsPage() {
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500 dark:text-gray-400">Current Status:</span>
-                    <span className={`px-3 py-1 text-sm rounded-full ${getStatusColor(selectedDonation.status)}`}>
-                      {selectedDonation.status}
-                    </span>
+                    <select
+                      value={selectedDonation.status}
+                      onChange={(e) => updateStatus(selectedDonation.id, e.target.value)}
+                      className={`px-3 py-1 text-sm rounded-full border-0 cursor-pointer ${getStatusColor(selectedDonation.status)}`}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="received">Received</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">Submitted:</span>
@@ -482,6 +542,170 @@ export default function AdminBookDonationsPage() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Book Donation Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Book Donation</h2>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddDonation} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Donor Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.donor_name}
+                    onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Donor Email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.donor_email}
+                    onChange={(e) => setFormData({ ...formData, donor_email: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Donor Phone *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.donor_phone}
+                    onChange={(e) => setFormData({ ...formData, donor_phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Book Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.book_title}
+                    onChange={(e) => setFormData({ ...formData, book_title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Author
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.author}
+                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    required
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="school">School</option>
+                    <option value="competitive">Competitive</option>
+                    <option value="skill">Skill Development</option>
+                    <option value="self-help">Self Help</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Book Type
+                  </label>
+                  <select
+                    value={formData.book_type}
+                    onChange={(e) => setFormData({ ...formData, book_type: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="physical">Physical</option>
+                    <option value="digital">Digital</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Condition *
+                  </label>
+                  <select
+                    required
+                    value={formData.condition}
+                    onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Notes
+                </label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
+                >
+                  Add Donation
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
