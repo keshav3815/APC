@@ -33,7 +33,6 @@ export default function Header() {
   }
 
   const navLinks = [
-    { href: '/', label: 'Home' },
     { href: '/community', label: 'Community' },
     { href: '/books', label: 'Books' },
     { href: '/events', label: 'Events' },
@@ -248,8 +247,7 @@ export default function Header() {
             
             {/* Mobile Auth Links */}
             {!loading && (
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                {user ? (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">{user ? (
                   <>
                     <Link
                       href={getDashboardLink()}

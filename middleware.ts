@@ -19,17 +19,7 @@ const librarianRoutes = ['/librarian']
 
 // Routes that are public (accessible without auth)
 const publicRoutes = [
-  '/', 
-  '/about',
-  '/mission',
-  '/books',
-  '/events', 
-  '/donations',
-  '/community',
-  '/contact',
-  '/volunteer',
-  '/transparency',
-  '/expenses',
+  '/',
   '/auth/signin', 
   '/auth/signup', 
   '/auth/forgot-password', 
@@ -76,11 +66,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // For non-public routes, require authentication
-  // Pages like /books, /events, /donations, /community should require sign-in
-  const requiresAuth = !isPublicRoute && !isAuthRoute && !pathname.startsWith('/_next') && !pathname.startsWith('/api') && !pathname.includes('.')
+  // For non-public routes and non-auth routes, require authentication
+  // Only home page (/) and auth pages are accessible without sign-in
+  const requiresAuth = !isPublicRoute && !pathname.startsWith('/_next') && !pathname.startsWith('/api') && !pathname.includes('.')
   
-  if (!user && requiresAuth && pathname !== '/') {
+  if (!user && requiresAuth) {
     const redirectUrl = new URL('/auth/signin', request.url)
     redirectUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(redirectUrl)
