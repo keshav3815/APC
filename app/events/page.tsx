@@ -36,6 +36,23 @@ export default function Events() {
 
   useEffect(() => {
     fetchEvents()
+
+    // Set up real-time subscription for events
+    const eventsSubscription = supabase
+      .channel('events-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'events' },
+        (payload: any) => {
+          console.log('Events changed:', payload)
+          fetchEvents() // Refetch data when events table changes
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscription on unmount
+    return () => {
+      eventsSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchEvents = async () => {

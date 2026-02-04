@@ -47,6 +47,47 @@ export default function Books() {
 
   useEffect(() => {
     fetchData()
+
+    // Set up real-time subscriptions
+    const statsSubscription = supabase
+      .channel('stats-changes-books')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'stats' },
+        (payload: any) => {
+          console.log('Stats changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    const testimonialsSubscription = supabase
+      .channel('testimonials-changes-books')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'testimonials' },
+        (payload: any) => {
+          console.log('Testimonials changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    const bookIssuesSubscription = supabase
+      .channel('book-issues-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'book_issues' },
+        (payload: any) => {
+          console.log('Book issues changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      statsSubscription.unsubscribe()
+      testimonialsSubscription.unsubscribe()
+      bookIssuesSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchData = async () => {

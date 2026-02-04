@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import RouteProtection from '@/components/RouteProtection'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { Toaster } from 'react-hot-toast'
 
@@ -31,7 +32,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Header />
-          <main className="min-h-screen">{children}</main>
+          <RouteProtection>
+            <main className="min-h-screen">{children}</main>
+          </RouteProtection>
           <Footer />
           <Toaster
             position="top-right"

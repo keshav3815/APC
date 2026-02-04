@@ -51,6 +51,15 @@ function SignInForm() {
           Back to Home
         </Link>
 
+        {/* Info Message for redirected users */}
+        {redirectTo !== '/dashboard' && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              Please sign in to access this page
+            </p>
+          </div>
+        )}
+
         {/* Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
           {/* Header */}
@@ -151,7 +160,7 @@ function SignInForm() {
           <p className="text-center text-gray-600 dark:text-gray-400">
             Don't have an account?{' '}
             <Link
-              href="/auth/signup"
+              href={`/auth/signup${redirectTo !== '/dashboard' ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`}
               className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
             >
               Sign up

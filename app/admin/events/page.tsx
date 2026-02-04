@@ -60,6 +60,23 @@ export default function AdminEventsPage() {
 
   useEffect(() => {
     fetchEvents()
+
+    // Set up real-time subscription for events
+    const eventsSubscription = supabase
+      .channel('events-changes-admin')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'events' },
+        (payload: any) => {
+          console.log('Events changed in admin:', payload)
+          fetchEvents() // Refetch events when table changes
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscription on unmount
+    return () => {
+      eventsSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchEvents = async () => {

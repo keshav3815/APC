@@ -49,6 +49,47 @@ export default function Donations() {
 
   useEffect(() => {
     fetchData()
+
+    // Set up real-time subscriptions
+    const campaignsSubscription = supabase
+      .channel('campaigns-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'campaigns' },
+        (payload: any) => {
+          console.log('Campaigns changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    const statsSubscription = supabase
+      .channel('stats-changes-donations')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'stats' },
+        (payload: any) => {
+          console.log('Stats changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    const donationsSubscription = supabase
+      .channel('donations-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'donations' },
+        (payload: any) => {
+          console.log('Donations changed:', payload)
+          fetchData()
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      campaignsSubscription.unsubscribe()
+      statsSubscription.unsubscribe()
+      donationsSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchData = async () => {

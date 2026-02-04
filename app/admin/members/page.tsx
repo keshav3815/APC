@@ -37,6 +37,23 @@ export default function MembersApproval() {
 
   useEffect(() => {
     fetchPendingMembers()
+
+    // Set up real-time subscription for members
+    const membersSubscription = supabase
+      .channel('members-changes-admin')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'members' },
+        (payload: any) => {
+          console.log('Members changed in admin:', payload)
+          fetchPendingMembers() // Refetch pending members when table changes
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscription on unmount
+    return () => {
+      membersSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchPendingMembers = async () => {

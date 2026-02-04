@@ -51,6 +51,36 @@ export default function Community() {
 
   useEffect(() => {
     fetchData()
+
+    // Set up real-time subscription for members
+    const membersSubscription = supabase
+      .channel('members-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'members' },
+        (payload: any) => {
+          console.log('Members changed:', payload)
+          fetchData() // Refetch data when members table changes
+        }
+      )
+      .subscribe()
+
+    // Set up real-time subscription for stats
+    const statsSubscription = supabase
+      .channel('stats-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'stats' },
+        (payload: any) => {
+          console.log('Stats changed:', payload)
+          fetchData() // Refetch data when stats table changes
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      membersSubscription.unsubscribe()
+      statsSubscription.unsubscribe()
+    }
   }, [])
 
   const fetchData = async () => {

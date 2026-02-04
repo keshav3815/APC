@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Mail, Lock, Eye, EyeOff, UserPlus, ArrowLeft, Loader2, User } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -15,7 +15,10 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { signUp } = useAuth()
+  
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,8 +41,9 @@ export default function SignUp() {
       if (error) {
         toast.error(error.message || 'Failed to sign up')
       } else {
-        toast.success('Account created! Please check your email to verify.')
-        router.push('/auth/signin')
+        toast.success('Account created successfully!')
+        // Redirect to the intended page or dashboard
+        router.push(redirectTo)
       }
     } catch (err) {
       toast.error('An unexpected error occurred')
@@ -59,6 +63,15 @@ export default function SignUp() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
         </Link>
+
+        {/* Info Message for redirected users */}
+        {redirectTo !== '/dashboard' && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              Please sign up or sign in to access this page
+            </p>
+          </div>
+        )}
 
         {/* Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
@@ -187,7 +200,7 @@ export default function SignUp() {
           <p className="text-center text-gray-600 dark:text-gray-400">
             Already have an account?{' '}
             <Link
-              href="/auth/signin"
+              href={`/auth/signin${redirectTo !== '/dashboard' ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`}
               className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
             >
               Sign in

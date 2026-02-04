@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Users, BookOpen, Calendar, Heart, ArrowRight, TrendingUp, Star, Target, Users2, Zap } from 'lucide-react'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import Badge from '@/components/Badge'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Home() {
   const [stats, setStats] = useState({
@@ -13,12 +14,66 @@ export default function Home() {
     events: 0,
     donations: 0,
   })
+  const [targetStats, setTargetStats] = useState({
+    members: 1500,
+    books: 500,
+    events: 50,
+    donations: 50000,
+  })
 
   const [isScrolled, setIsScrolled] = useState(false)
+  const supabase = createClient()
 
   useEffect(() => {
-    // Animate counters
-    const targets = { members: 1500, books: 500, events: 50, donations: 50000 }
+    // Fetch real stats from Supabase
+    fetchStats()
+
+    // Set up real-time subscription for stats
+    const statsSubscription = supabase
+      .channel('stats-changes-home')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'stats' },
+        (payload: any) => {
+          console.log('Stats changed:', payload)
+          fetchStats()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      statsSubscription.unsubscribe()
+    }
+  }, [])
+
+  const fetchStats = async () => {
+    try {
+      const { data: statsData } = await supabase
+        .from('stats')
+        .select('*')
+
+      if (statsData) {
+        const statsMap: any = {}
+        statsData.forEach((s: any) => {
+          statsMap[s.key] = s.value
+        })
+        
+        const newTargets = {
+          members: statsMap.members || 1500,
+          books: statsMap.books || 500,
+          events: statsMap.events || 50,
+          donations: statsMap.donations || 50000,
+        }
+        setTargetStats(newTargets)
+        animateStats(newTargets)
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+      // Use default values if fetch fails
+      animateStats(targetStats)
+    }
+  }
+
+  const animateStats = (targets: typeof targetStats) => {
     const duration = 2000
     const steps = 60
     const increment = duration / steps
@@ -41,9 +96,7 @@ export default function Home() {
         clearInterval(timer)
       }
     }, increment)
-
-    return () => clearInterval(timer)
-  }, [])
+  }
 
   useEffect(() => {
     const handleScroll = () => {

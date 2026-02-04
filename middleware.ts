@@ -1,8 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-// Routes that require authentication
+// Routes that require authentication (users must login/signup to access)
 const protectedRoutes = [
+  '/community',
+  '/books',
+  '/donations',
+  '/transparency',
+  '/expenses',
+  '/events',
+  '/volunteer',
   '/dashboard',
   '/admin',
   '/librarian',
@@ -20,6 +27,9 @@ const librarianRoutes = ['/librarian']
 // Routes that are public (accessible without auth)
 const publicRoutes = [
   '/',
+  '/about',
+  '/contact',
+  '/mission',
   '/auth/signin', 
   '/auth/signup', 
   '/auth/forgot-password', 
@@ -39,7 +49,7 @@ export async function middleware(request: NextRequest) {
 
   // If user is not logged in and trying to access protected routes
   if (!user && isProtectedRoute) {
-    const redirectUrl = new URL('/auth/signin', request.url)
+    const redirectUrl = new URL('/auth/signup', request.url)
     redirectUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(redirectUrl)
   }
