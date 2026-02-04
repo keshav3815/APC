@@ -220,44 +220,6 @@ export default function Events() {
           )}
         </section>
 
-        {/* Calendar View */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Calendar View</h2>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <div className="grid grid-cols-7 gap-2 mb-4">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <div key={day} className="text-center font-semibold text-gray-700 dark:text-gray-300 py-2">
-                  {day}
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-2">
-              {Array.from({ length: 35 }, (_, i) => {
-                const date = i + 1
-                const eventDate = upcomingEvents.find(e => {
-                  const d = new Date(e.start_date).getDate()
-                  return d === date
-                })
-                return (
-                  <div
-                    key={i}
-                    className={`aspect-square p-2 border border-gray-200 dark:border-gray-700 rounded ${
-                      eventDate ? 'bg-primary-100 dark:bg-primary-900 border-primary-300 dark:border-primary-700' : ''
-                    }`}
-                  >
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{date <= 31 ? date : ''}</div>
-                    {eventDate && (
-                      <div className="text-xs text-primary-600 dark:text-primary-400 mt-1 truncate">
-                        {eventDate.title}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
         {/* Completed Events */}
         <section>
           <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
@@ -274,34 +236,46 @@ export default function Events() {
               {completedEvents.map((event) => (
                 <div
                   key={event.id}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      event.event_type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                      event.event_type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                    }`}>
-                      {event.event_type.replace('-', ' ').toUpperCase()}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(event.start_date).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {event.location}
-                  </div>
-                  {event.outcome && (
-                    <div className="mb-4">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Outcome:</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{event.outcome}</p>
+                  {event.image_url && (
+                    <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
+                      <img 
+                        src={event.image_url} 
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Participants:</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{event.current_participants || 0} attended</p>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        event.event_type === 'workshop' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                        event.event_type === 'donation-drive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                        'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                      }`}>
+                        {event.event_type.replace('-', ' ').toUpperCase()}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(event.start_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{event.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{event.description}</p>
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {event.location}
+                    </div>
+                    {event.outcome && (
+                      <div className="mb-4 mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Outcome:</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.outcome}</p>
+                      </div>
+                    )}
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-3">
+                      <Users className="w-4 h-4 mr-2" />
+                      <span className="font-semibold">{event.current_participants || 0}</span> participants
+                    </div>
                   </div>
                 </div>
               ))}

@@ -21,6 +21,16 @@ interface BookIssue {
   accession_numbers: string[]
 }
 
+interface BookDonation {
+  id: string
+  donor_name: string
+  book_title: string
+  author: string
+  category: string
+  quantity: number
+  created_at: string
+}
+
 export default function Books() {
   const [showDonateForm, setShowDonateForm] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -43,6 +53,7 @@ export default function Books() {
   })
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [bookIssues, setBookIssues] = useState<BookIssue[]>([])
+  const [bookDonations, setBookDonations] = useState<BookDonation[]>([])
   const supabase = createClient()
 
   useEffect(() => {
@@ -153,6 +164,18 @@ export default function Books() {
         }, {})
         
         setBookIssues(Object.values(issuesByPatron))
+      }
+
+      // Fetch approved book donations
+      const { data: donationsData } = await supabase
+        .from('book_donations')
+        .select('id, donor_name, book_title, author, category, quantity, created_at')
+        .eq('status', 'received')
+        .order('created_at', { ascending: false })
+        .limit(12)
+
+      if (donationsData && donationsData.length > 0) {
+        setBookDonations(donationsData)
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -332,6 +355,66 @@ export default function Books() {
                   </div>
                   <p className="text-gray-700 dark:text-gray-300 mb-4 italic group-hover:text-gray-900 dark:group-hover:text-white transition-colors">"{testimonial.content}"</p>
                   <p className="font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">- {testimonial.name}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Book Donations */}
+        {bookDonations.length > 0 && (
+          <section className="mb-16">
+            <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white flex items-center">
+              <Heart className="w-10 h-10 mr-3 text-red-600" />
+              Recent Book Donations
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bookDonations.map((donation) => (
+                <div
+                  key={donation.id}
+                  className="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700 hover:-translate-y-2"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-red-500/0 group-hover:from-red-500/5 group-hover:to-red-500/10 rounded-2xl transition-all duration-300 -z-10"></div>
+                  
+                  {/* Donor Badge */}
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg">
+                      {donation.donor_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                        {donation.donor_name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(donation.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Book Details */}
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2">
+                      {donation.book_title}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      by <span className="font-medium text-gray-900 dark:text-white">{donation.author}</span>
+                    </p>
+                    <div className="flex items-center justify-between pt-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        {donation.category}
+                      </span>
+                      <span className="text-sm font-bold text-red-600 dark:text-red-400">
+                        Qty: {donation.quantity}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Thank you note */}
+                  <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400 italic">
+                      🙏 Thank you for your generous donation!
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

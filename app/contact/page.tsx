@@ -110,7 +110,7 @@ export default function Contact() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Email</h3>
-                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_email || 'contact@apc.org'}</p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_email || 'apcfoundation2015@gmail.com'}</p>
                 </div>
 
                 {/* Phone */}
@@ -119,7 +119,7 @@ export default function Contact() {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Phone</h3>
-                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_phone || '+91 1234567890'}</p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-2">{settings?.contact_phone || '7053324988'}</p>
                 </div>
 
                 {/* Address */}
@@ -129,7 +129,7 @@ export default function Contact() {
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Address</h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {settings?.address || '123 Community Street, Mumbai, Maharashtra 400001, India'}
+                    {settings?.address || 'Bheja, Madhepur, Madhubani, Bihar, India 847408'}
                   </p>
                 </div>
 

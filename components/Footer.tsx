@@ -89,15 +89,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start space-x-3 text-gray-400 hover:text-white transition-colors group">
                 <Mail className="w-5 h-5 mt-1 flex-shrink-0 group-hover:animate-float" />
-                <span>contact@apc.org</span>
+                <a href="mailto:apcfoundation2015@gmail.com" className="hover:text-white">apcfoundation2015@gmail.com</a>
               </li>
               <li className="flex items-start space-x-3 text-gray-400 hover:text-white transition-colors group">
                 <Phone className="w-5 h-5 mt-1 flex-shrink-0 group-hover:animate-float" />
-                <span>+91 1234567890</span>
+                <a href="tel:7053324988" className="hover:text-white">7053324988</a>
               </li>
               <li className="flex items-start space-x-3 text-gray-400 hover:text-white transition-colors group">
                 <MapPin className="w-5 h-5 mt-1 flex-shrink-0 group-hover:animate-float" />
-                <span>India</span>
+                <span>Bheja, Madhepur, Madhubani, Bihar, India 847408</span>
               </li>
             </ul>
           </div>

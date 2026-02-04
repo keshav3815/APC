@@ -54,7 +54,8 @@ export default function AdminEventsPage() {
     location: '',
     max_participants: 50,
     registration_deadline: '',
-    outcome: ''
+    outcome: '',
+    image_url: ''
   })
   const supabase = createClient()
 
@@ -182,7 +183,8 @@ export default function AdminEventsPage() {
       location: '',
       max_participants: 50,
       registration_deadline: '',
-      outcome: ''
+      outcome: '',
+      image_url: ''
     })
     setSelectedEvent(null)
   }
@@ -199,7 +201,8 @@ export default function AdminEventsPage() {
       location: event.location,
       max_participants: event.max_participants,
       registration_deadline: event.registration_deadline?.split('T')[0] || '',
-      outcome: event.outcome || ''
+      outcome: event.outcome || '',
+      image_url: event.image_url || ''
     })
     setShowModal(true)
   }
@@ -532,19 +535,32 @@ export default function AdminEventsPage() {
                   />
                 </div>
               </div>
-              {selectedEvent?.status === 'completed' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Outcome</label>
-                  <textarea
-                    rows={2}
-                    value={formData.outcome}
-                    onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
-                    placeholder="Brief summary of event outcomes..."
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
+              {(formData.status === 'completed' || selectedEvent?.status === 'completed') && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Event Image URL</label>
+                    <input
+                      type="url"
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Add image URL for completed events</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Outcome</label>
+                    <textarea
+                      rows={2}
+                      value={formData.outcome}
+                      onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
+                      placeholder="Brief summary of event outcomes..."
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                </>
               )}
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
