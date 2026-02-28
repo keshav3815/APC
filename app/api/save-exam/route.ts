@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * POST /api/save-exam
@@ -8,7 +8,8 @@ import { createClient } from '@/lib/supabase/server';
  * Returns: { saved: boolean }
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = await createServerSupabaseClient() as any;
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -27,20 +28,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'exam_id is required' }, { status: 400 });
   }
 
-  // Check existing
-  const { data: existing } = await supabase
+  // Check if already saved (count only — avoids maybeSingle() type issues)
+  const { count } = await supabase
     .from('saved_exams')
-    .select('id')
+    .select('*', { count: 'exact', head: true })
     .eq('student_id', user.id)
-    .eq('exam_id', exam_id)
-    .maybeSingle();
+    .eq('exam_id', exam_id);
 
-  if (existing) {
-    // Unsave
+  if (count && count > 0) {
+    // Unsave — delete by compound key
     const { error } = await supabase
       .from('saved_exams')
       .delete()
-      .eq('id', existing.id);
+      .eq('student_id', user.id)
+      .eq('exam_id', exam_id);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ saved: false });

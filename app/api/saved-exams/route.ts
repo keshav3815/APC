@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * GET /api/saved-exams
@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/server';
  * Optionally filter by: search, status, level
  */
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = await createServerSupabaseClient() as any;
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
 
   // Filter in-memory (Supabase doesn't support filtering on joined columns directly
   // without views; keeping it simple here)
-  let results = (data ?? []).filter(row => {
+  let results = (data ?? []).filter((row: Record<string, unknown>) => {
     const exam = row.exam as Record<string, unknown> | null;
     if (!exam || !exam.is_active) return false;
     if (status && exam.status !== status) return false;

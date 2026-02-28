@@ -869,6 +869,145 @@ export interface Database {
           created_at?: string
         }
       }
+      exams: {
+        Row: {
+          id: string
+          exam_name: string
+          organization: string
+          level: string
+          state: string | null
+          description: string | null
+          eligibility: string | null
+          qualification: string | null
+          age_limit: string | null
+          application_start_date: string | null
+          application_last_date: string | null
+          exam_date: string | null
+          official_website: string | null
+          notification_pdf: string | null
+          application_fee: string | null
+          selection_process: string | null
+          status: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          exam_name: string
+          organization: string
+          level?: string
+          state?: string | null
+          description?: string | null
+          eligibility?: string | null
+          qualification?: string | null
+          age_limit?: string | null
+          application_start_date?: string | null
+          application_last_date?: string | null
+          exam_date?: string | null
+          official_website?: string | null
+          notification_pdf?: string | null
+          application_fee?: string | null
+          selection_process?: string | null
+          status?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          exam_name?: string
+          organization?: string
+          level?: string
+          state?: string | null
+          description?: string | null
+          eligibility?: string | null
+          qualification?: string | null
+          age_limit?: string | null
+          application_start_date?: string | null
+          application_last_date?: string | null
+          exam_date?: string | null
+          official_website?: string | null
+          notification_pdf?: string | null
+          application_fee?: string | null
+          selection_process?: string | null
+          status?: string | null
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saved_exams: {
+        Row: {
+          id: string
+          student_id: string
+          exam_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          exam_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          exam_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_exams_student_id_fkey"
+            columns: ["student_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_exams_exam_id_fkey"
+            columns: ["exam_id"]
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      exam_reminders: {
+        Row: {
+          id: string
+          student_id: string
+          exam_id: string
+          reminder_type: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          exam_id: string
+          reminder_type?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          exam_id?: string
+          reminder_type?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_reminders_student_id_fkey"
+            columns: ["student_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_reminders_exam_id_fkey"
+            columns: ["exam_id"]
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
