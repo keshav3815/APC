@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import {
   LayoutDashboard,
   Calendar,
-  Heart,
   BookOpen,
   Bell,
   User,
@@ -23,7 +22,6 @@ import {
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Calendar, label: 'My Events', href: '/dashboard/events' },
-  { icon: Heart, label: 'My Donations', href: '/dashboard/donations' },
   { icon: BookOpen, label: 'My Books', href: '/dashboard/books' },
   { icon: History, label: 'Activity', href: '/dashboard/activity' },
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },

@@ -15,7 +15,7 @@ export default function Footer() {
     { href: '/community', label: 'Join Community' },
     { href: '/books', label: 'Donate Books' },
     { href: '/events', label: 'Events' },
-    { href: '/donations', label: 'Donate' },
+    { href: '/volunteer', label: 'Volunteer' },
   ]
 
   return (

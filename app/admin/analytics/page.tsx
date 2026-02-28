@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { 
-  BarChart3, Users, BookOpen, Calendar, Heart, TrendingUp,
+  BarChart3, Users, BookOpen, Calendar, TrendingUp,
   TrendingDown, Loader2, ArrowUp, ArrowDown, DollarSign,
   UserPlus, FileText, Activity
 } from 'lucide-react'
@@ -21,12 +21,6 @@ interface AnalyticsData {
     upcoming: number
     completed: number
     registrations: number
-  }
-  donations: {
-    total: number
-    amount: number
-    thisMonth: number
-    pending: number
   }
   library: {
     totalBooks: number
@@ -52,7 +46,6 @@ export default function AdminAnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     users: { total: 0, thisMonth: 0, admins: 0, librarians: 0 },
     events: { total: 0, upcoming: 0, completed: 0, registrations: 0 },
-    donations: { total: 0, amount: 0, thisMonth: 0, pending: 0 },
     library: { totalBooks: 0, borrowed: 0, patrons: 0, issues: 0 },
     volunteers: { total: 0, approved: 0, pending: 0 },
     contacts: { total: 0, new: 0, resolved: 0 }
@@ -75,7 +68,6 @@ export default function AdminAnalyticsPage() {
       const [
         usersData,
         eventsData,
-        donationsData,
         booksData,
         patronsData,
         issuesData,
@@ -85,7 +77,6 @@ export default function AdminAnalyticsPage() {
       ] = await Promise.all([
         supabase.from('profiles').select('id, role, created_at'),
         supabase.from('events').select('id, status'),
-        supabase.from('donations').select('id, amount, status, created_at'),
         supabase.from('books').select('id, status'),
         supabase.from('library_patrons').select('id'),
         supabase.from('book_issues').select('id, status'),
@@ -103,15 +94,6 @@ export default function AdminAnalyticsPage() {
 
       // Process events data
       const events = (eventsData.data || []) as Array<{ id: string; status: string }>
-      
-      // Process donations data
-      const donations = (donationsData.data || []) as Array<{ id: string; amount: number; status: string; created_at: string }>
-      const completedDonations = donations.filter(d => d.status === 'completed')
-      const totalAmount = completedDonations.reduce((sum, d) => sum + (d.amount || 0), 0)
-      const thisMonthDonations = donations.filter(d =>
-        new Date(d.created_at) >= new Date(monthStart) &&
-        new Date(d.created_at) <= new Date(monthEnd)
-      )
 
       // Process library data
       const books = (booksData.data || []) as Array<{ id: string; status: string }>
@@ -141,12 +123,6 @@ export default function AdminAnalyticsPage() {
           completed: events.filter(e => e.status === 'completed').length,
           registrations: registrationsData.data?.length || 0
         },
-        donations: {
-          total: donations.length,
-          amount: totalAmount,
-          thisMonth: thisMonthDonations.length,
-          pending: donations.filter(d => d.status === 'pending').length
-        },
         library: {
           totalBooks: books.length,
           borrowed: issues.filter(i => i.status === 'issued').length,
@@ -172,12 +148,6 @@ export default function AdminAnalyticsPage() {
           message: 'New user registered',
           date: u.created_at,
           icon: UserPlus
-        })),
-        ...donations.slice(0, 5).map(d => ({
-          type: 'donation',
-          message: `Donation received: ₹${d.amount}`,
-          date: d.created_at,
-          icon: Heart
         })),
         ...contacts.slice(0, 5).map(c => ({
           type: 'contact',
@@ -243,18 +213,16 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-              <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
+              <Users className="w-6 h-6 text-teal-600 dark:text-teal-400" />
             </div>
-            <span className="flex items-center gap-1 text-sm text-green-600">
+            <span className="flex items-center gap-1 text-sm text-teal-600">
               <ArrowUp className="w-4 h-4" />
-              {analytics.donations.thisMonth}
+              {analytics.volunteers.pending} pending
             </span>
           </div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            ₹{analytics.donations.amount.toLocaleString()}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Donations</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{analytics.volunteers.total}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Volunteers</p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -311,34 +279,6 @@ export default function AdminAnalyticsPage() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 dark:text-gray-400">New this month</span>
                 <span className="font-medium text-green-600">{analytics.users.thisMonth}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Donations Breakdown */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Heart className="w-5 h-5 text-green-600" />
-            Donations Breakdown
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Total Donations</span>
-              <span className="font-medium text-gray-900 dark:text-white">{analytics.donations.total}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Pending</span>
-              <span className="font-medium text-yellow-600">{analytics.donations.pending}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Total Amount</span>
-              <span className="font-medium text-green-600">₹{analytics.donations.amount.toLocaleString()}</span>
-            </div>
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">This month</span>
-                <span className="font-medium text-primary-600">{analytics.donations.thisMonth}</span>
               </div>
             </div>
           </div>

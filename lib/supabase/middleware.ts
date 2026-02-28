@@ -54,7 +54,16 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Wrap in timeout — mobile hotspot / some ISPs block server-to-server connections
+  // Browser-side Supabase calls still work normally
+  let user = null
+  try {
+    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000))
+    const userFetch = supabase.auth.getUser().then(({ data }) => data.user).catch(() => null)
+    user = await Promise.race([userFetch, timeout])
+  } catch {
+    user = null
+  }
 
   return { response, user, supabase }
 }

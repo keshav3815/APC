@@ -36,7 +36,6 @@ export default function Header() {
     { href: '/community', label: 'Community' },
     { href: '/books', label: 'Books' },
     { href: '/events', label: 'Events' },
-    { href: '/donations', label: 'Donations' },
     { href: '/transparency', label: 'Transparency' },
     { href: '/expenses', label: 'Expenses' },
     { href: '/about', label: 'About' },

@@ -13,7 +13,6 @@ interface RouteProtectionProps {
 const protectedPages = [
   '/community',
   '/books',
-  '/donations',
   '/transparency',
   '/expenses',
   '/events',

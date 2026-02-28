@@ -21,7 +21,6 @@ import {
   User,
   Home,
   MessageSquare,
-  DollarSign,
   Image,
 } from 'lucide-react'
 
@@ -37,8 +36,6 @@ const menuItems = [
   { href: '/admin/books', label: 'Library', icon: BookOpen },
   { href: '/admin/book-donations', label: 'Book Donations', icon: Heart },
   { href: '/admin/events', label: 'Events', icon: Calendar },
-  { href: '/admin/donations', label: 'Donations', icon: DollarSign },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: DollarSign },
   { href: '/admin/expenses', label: 'Expenses', icon: FileText },
   { href: '/admin/volunteers', label: 'Volunteers', icon: Users },
   { href: '/admin/contact', label: 'Contact Inquiries', icon: MessageSquare },

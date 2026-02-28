@@ -5,7 +5,6 @@ import { updateSession } from '@/lib/supabase/middleware'
 const protectedRoutes = [
   '/community',
   '/books',
-  '/donations',
   '/transparency',
   '/expenses',
   '/events',
@@ -14,7 +13,6 @@ const protectedRoutes = [
   '/admin',
   '/librarian',
   '/profile',
-  '/my-donations',
   '/my-events',
 ]
 

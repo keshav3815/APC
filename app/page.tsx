@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Users, BookOpen, Calendar, Heart, ArrowRight, TrendingUp, Star, Target, Users2, Zap } from 'lucide-react'
+import { Users, BookOpen, Calendar, ArrowRight, TrendingUp, Star, Target, Users2, Zap } from 'lucide-react'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import Badge from '@/components/Badge'
 import { createClient } from '@/lib/supabase/client'
@@ -12,13 +12,11 @@ export default function Home() {
     members: 0,
     books: 0,
     events: 0,
-    donations: 0,
   })
   const [targetStats, setTargetStats] = useState({
     members: 1500,
     books: 500,
     events: 50,
-    donations: 50000,
   })
 
   const [isScrolled, setIsScrolled] = useState(false)
@@ -61,7 +59,6 @@ export default function Home() {
           members: statsMap.members || 1500,
           books: statsMap.books || 500,
           events: statsMap.events || 50,
-          donations: statsMap.donations || 50000,
         }
         setTargetStats(newTargets)
         animateStats(newTargets)
@@ -78,18 +75,16 @@ export default function Home() {
     const steps = 60
     const increment = duration / steps
 
-    let current = { members: 0, books: 0, events: 0, donations: 0 }
+    let current = { members: 0, books: 0, events: 0 }
     const timer = setInterval(() => {
       current.members = Math.min(current.members + targets.members / steps, targets.members)
       current.books = Math.min(current.books + targets.books / steps, targets.books)
       current.events = Math.min(current.events + targets.events / steps, targets.events)
-      current.donations = Math.min(current.donations + targets.donations / steps, targets.donations)
       
       setStats({
         members: Math.floor(current.members),
         books: Math.floor(current.books),
         events: Math.floor(current.events),
-        donations: Math.floor(current.donations),
       })
 
       if (current.members >= targets.members) {
@@ -162,17 +157,17 @@ export default function Home() {
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                href="/donations"
+                href="/volunteer"
                 className="bg-white text-primary-600 px-8 py-4 rounded-lg font-semibold hover-lift inline-flex items-center justify-center group shadow-lg"
               >
-                <Heart className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-                Support Us
-                <Zap className="ml-2 w-5 h-5 group-hover:animate-pulse" />
+                <Zap className="mr-2 w-5 h-5 group-hover:animate-pulse" />
+                Volunteer Now
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
             {/* Stats Preview */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 stagger-item">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-16 stagger-item">
               <div className="glass p-4 rounded-lg text-center hover-lift shadow-lg">
                 <div className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">{stats.members}+</div>
                 <div className="text-sm text-gray-700 dark:text-gray-300">Members</div>
@@ -184,10 +179,6 @@ export default function Home() {
               <div className="glass p-4 rounded-lg text-center hover-lift shadow-lg stagger-item">
                 <div className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">{stats.events}+</div>
                 <div className="text-sm text-gray-700 dark:text-gray-300">Events</div>
-              </div>
-              <div className="glass p-4 rounded-lg text-center hover-lift shadow-lg stagger-item">
-                <div className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">₹{(stats.donations / 1000).toFixed(0)}K+</div>
-                <div className="text-sm text-gray-700 dark:text-gray-300">Raised</div>
               </div>
             </div>
           </div>
@@ -209,7 +200,7 @@ export default function Home() {
             <p className="text-lg text-gray-600 dark:text-gray-400">Transforming communities one step at a time</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {/* Active Members Card */}
             <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group">
               <div className="mb-4 flex justify-center">
@@ -249,18 +240,6 @@ export default function Home() {
               <div className="text-gray-600 dark:text-gray-400 font-medium">Events Organized</div>
             </div>
 
-            {/* Fund Raised Card */}
-            <div className="glass card-hover p-8 rounded-2xl text-center stagger-item group delay-300">
-              <div className="mb-4 flex justify-center">
-                <div className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg group-hover:scale-110 transition-transform">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-              </div>
-              <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                ₹50K+
-              </div>
-              <div className="text-gray-600 dark:text-gray-400 font-medium">Fund Raised</div>
-            </div>
           </div>
         </div>
       </section>

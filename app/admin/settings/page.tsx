@@ -20,7 +20,6 @@ interface SiteSettings {
   instagramUrl: string
   youtubeUrl: string
   linkedinUrl: string
-  enableDonations: boolean
   enableVolunteers: boolean
   enableEvents: boolean
   maintenanceMode: boolean
@@ -41,7 +40,6 @@ export default function AdminSettingsPage() {
     instagramUrl: '',
     youtubeUrl: '',
     linkedinUrl: '',
-    enableDonations: true,
     enableVolunteers: true,
     enableEvents: true,
     maintenanceMode: false
@@ -49,7 +47,6 @@ export default function AdminSettingsPage() {
   const [stats, setStats] = useState({
     users: 0,
     events: 0,
-    donations: 0,
     books: 0
   })
   const supabase = createClient()
@@ -85,17 +82,15 @@ export default function AdminSettingsPage() {
 
   const fetchStats = async () => {
     try {
-      const [users, events, donations, books] = await Promise.all([
+      const [users, events, books] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('events').select('id', { count: 'exact', head: true }),
-        supabase.from('donations').select('id', { count: 'exact', head: true }),
         supabase.from('books').select('id', { count: 'exact', head: true })
       ])
 
       setStats({
         users: users.count || 0,
         events: events.count || 0,
-        donations: donations.count || 0,
         books: books.count || 0
       })
     } catch (error) {
@@ -386,23 +381,6 @@ export default function AdminSettingsPage() {
               <div className="space-y-4">
                 <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                      <Bell className="w-5 h-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-900 dark:text-white">Donations</span>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Allow visitors to make donations</p>
-                    </div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={settings.enableDonations}
-                    onChange={(e) => setSettings({ ...settings, enableDonations: e.target.checked })}
-                    className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                  />
-                </label>
-                <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer">
-                  <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                       <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
@@ -460,10 +438,6 @@ export default function AdminSettingsPage() {
                 <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                   <p className="text-sm text-gray-500 dark:text-gray-400">Total Events</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.events}</p>
-                </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Donations</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.donations}</p>
                 </div>
                 <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                   <p className="text-sm text-gray-500 dark:text-gray-400">Total Books</p>

@@ -6,7 +6,6 @@ import {
   Users,
   BookOpen,
   Calendar,
-  Heart,
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -20,7 +19,6 @@ interface DashboardStats {
   totalUsers: number
   totalBooks: number
   totalEvents: number
-  totalDonations: number
   totalIncome: number
   totalExpense: number
   recentActivity: any[]
@@ -46,17 +44,14 @@ export default function AdminDashboard() {
         { count: usersCount },
         { count: booksCount },
         { count: eventsCount },
-        { data: donations },
         { data: transactions },
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('books').select('*', { count: 'exact', head: true }),
         supabase.from('events').select('*', { count: 'exact', head: true }),
-        supabase.from('donations').select('amount').eq('payment_status', 'completed'),
         supabase.from('transactions').select('*'),
       ])
 
-      const totalDonations = donations?.reduce((sum: number, d: any) => sum + Number(d.amount || 0), 0) || 0
       const totalIncome = transactions?.filter((t: any) => t.transaction_type === 'income').reduce((sum: number, t: any) => sum + Number(t.amount || 0), 0) || 0
       const totalExpense = transactions?.filter((t: any) => t.transaction_type === 'expense').reduce((sum: number, t: any) => sum + Number(t.amount || 0), 0) || 0
 
@@ -64,7 +59,6 @@ export default function AdminDashboard() {
         totalUsers: usersCount || 0,
         totalBooks: booksCount || 0,
         totalEvents: eventsCount || 0,
-        totalDonations,
         totalIncome,
         totalExpense,
         recentActivity: [],
@@ -99,14 +93,6 @@ export default function AdminDashboard() {
       icon: Calendar,
       color: 'purple',
       change: '+5%',
-      positive: true,
-    },
-    {
-      title: 'Total Donations',
-      value: `₹${(stats?.totalDonations || 0).toLocaleString()}`,
-      icon: Heart,
-      color: 'pink',
-      change: '+15%',
       positive: true,
     },
     {
@@ -261,13 +247,6 @@ export default function AdminDashboard() {
           >
             <Calendar className="w-8 h-8 text-purple-600 mb-2" />
             <span className="text-sm font-medium text-gray-900 dark:text-white">Create Event</span>
-          </a>
-          <a
-            href="/admin/campaigns"
-            className="flex flex-col items-center p-4 bg-pink-50 dark:bg-pink-900/20 rounded-lg hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors"
-          >
-            <Heart className="w-8 h-8 text-pink-600 mb-2" />
-            <span className="text-sm font-medium text-gray-900 dark:text-white">New Campaign</span>
           </a>
           <a
             href="/admin/members"

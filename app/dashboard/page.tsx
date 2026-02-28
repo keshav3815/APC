@@ -5,14 +5,12 @@ import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import {
   Calendar,
-  Heart,
   BookOpen,
   Bell,
   TrendingUp,
   Clock,
   ChevronRight,
   Loader2,
-  Gift,
   Star,
   Users,
 } from 'lucide-react'
@@ -20,8 +18,6 @@ import { createClient } from '@/lib/supabase/client'
 import { format } from 'date-fns'
 
 interface DashboardStats {
-  totalDonations: number
-  totalDonationAmount: number
   eventsAttended: number
   upcomingEvents: number
   booksIssued: number
@@ -30,7 +26,7 @@ interface DashboardStats {
 
 interface RecentActivity {
   id: string
-  type: 'donation' | 'event' | 'book'
+  type: 'event' | 'book'
   title: string
   description: string
   date: string
@@ -40,8 +36,6 @@ interface RecentActivity {
 export default function UserDashboard() {
   const { profile, user, loading: authLoading } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
-    totalDonations: 0,
-    totalDonationAmount: 0,
     eventsAttended: 0,
     upcomingEvents: 0,
     booksIssued: 0,
@@ -69,12 +63,6 @@ export default function UserDashboard() {
     setLoading(true)
 
     try {
-      // Fetch donations
-      const { data: donations } = await supabase
-        .from('donations')
-        .select('*')
-        .eq('user_id', user.id)
-
       // Fetch event registrations
       const { data: registrations } = await supabase
         .from('event_registrations')
@@ -121,8 +109,6 @@ export default function UserDashboard() {
       ) || []
 
       setStats({
-        totalDonations: donations?.length || 0,
-        totalDonationAmount: donations?.reduce((sum: number, d: any) => sum + (d.amount || 0), 0) || 0,
         eventsAttended: pastEvents.length,
         upcomingEvents: futureEvents.length,
         booksIssued: bookIssues.length,
@@ -138,17 +124,6 @@ export default function UserDashboard() {
 
       // Build activity feed
       const activityList: RecentActivity[] = []
-
-      donations?.slice(0, 5).forEach((d: any) => {
-        activityList.push({
-          id: d.id,
-          type: 'donation',
-          title: `Donated ₹${d.amount}`,
-          description: d.purpose || 'General donation',
-          date: d.created_at,
-          status: d.payment_status,
-        })
-      })
 
       registrations?.slice(0, 5).forEach((r: any) => {
         if (r.events) {
@@ -185,8 +160,6 @@ export default function UserDashboard() {
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'donation':
-        return <Heart className="w-4 h-4 text-pink-500" />
       case 'event':
         return <Calendar className="w-4 h-4 text-blue-500" />
       case 'book':
@@ -217,29 +190,7 @@ export default function UserDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-pink-600" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDonations}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Donations</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-              <Gift className="w-5 h-5 text-green-600" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            ₹{stats.totalDonationAmount.toLocaleString()}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Contributed</p>
-        </div>
-
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -284,17 +235,7 @@ export default function UserDashboard() {
       {/* Quick Actions */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link
-            href="/donations"
-            className="flex flex-col items-center p-4 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20 hover:shadow-md transition-shadow"
-          >
-            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-2 shadow">
-              <Heart className="w-6 h-6 text-pink-600" />
-            </div>
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Donate Now</span>
-          </Link>
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             href="/events"
             className="flex flex-col items-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:shadow-md transition-shadow"
@@ -437,18 +378,14 @@ export default function UserDashboard() {
           <Star className="w-6 h-6 text-green-600 mr-2" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Impact</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-green-600">₹{stats.totalDonationAmount.toLocaleString()}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Contributed</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
             <p className="text-3xl font-bold text-green-600">{stats.eventsAttended}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">Events Participated</p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-green-600">{stats.totalDonations + stats.eventsAttended}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Engagements</p>
+            <p className="text-3xl font-bold text-green-600">{stats.booksIssued}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Books Borrowed</p>
           </div>
         </div>
       </div>
