@@ -17,12 +17,14 @@ import {
   ChevronRight,
   History,
   Settings,
+  BookmarkCheck,
 } from 'lucide-react'
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Calendar, label: 'My Events', href: '/dashboard/events' },
   { icon: BookOpen, label: 'My Books', href: '/dashboard/books' },
+  { icon: BookmarkCheck, label: 'Saved Exams', href: '/dashboard/saved-exams' },
   { icon: History, label: 'Activity', href: '/dashboard/activity' },
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
 ]
