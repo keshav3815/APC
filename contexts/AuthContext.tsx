@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/supabase/client'
 
 interface Profile {
   id: string
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const supabase = createClient()
+  const supabase = getSupabaseClient()
 
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
     try {
@@ -96,39 +96,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setSession(initialSession)
         setUser(initialSession?.user ?? null)
+        setLoading(false) // unblock UI immediately once auth state is known
         
         if (initialSession?.user) {
-          await fetchProfile(initialSession.user.id)
+          fetchProfile(initialSession.user.id) // fetch in background, don't await
         }
       } catch (err) {
         console.error('Auth init error:', err)
-      } finally {
-        if (mounted) {
-          setLoading(false)
-        }
+        if (mounted) setLoading(false)
       }
     }
 
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: any, currentSession: any) => {
+      (event: any, currentSession: any) => {
         if (!mounted) return
 
         setSession(currentSession)
         setUser(currentSession?.user ?? null)
+        setLoading(false) // unblock UI immediately
 
         if (currentSession?.user) {
-          // Small delay to allow DB trigger to create profile
-          if (event === 'SIGNED_IN') {
-            setTimeout(() => fetchProfile(currentSession.user.id), 500)
-          } else {
-            await fetchProfile(currentSession.user.id)
-          }
+          fetchProfile(currentSession.user.id) // fetch profile in background
         } else {
           setProfile(null)
         }
-        setLoading(false)
       }
     )
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Users, UserCheck, Filter, Search, Clock, MapPin, Award, Heart, Sparkles, Loader2 } from 'lucide-react'
+import { Users, UserCheck, Filter, Search, Clock, MapPin, Award, Heart, Sparkles, Loader2, MessageSquare } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 import toast from 'react-hot-toast'
 
 interface Member {
@@ -26,8 +27,6 @@ interface PastContributor {
 export default function Community() {
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [showJoinForm, setShowJoinForm] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [members, setMembers] = useState<Member[]>([])
   const [pastContributors, setPastContributors] = useState<PastContributor[]>([])
@@ -36,16 +35,6 @@ export default function Community() {
     hoursServed: 0,
     villages: 0,
     activeVolunteers: 0,
-  })
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    village: '',
-    skills: '',
-    interests: '',
-    availability: '',
-    type: 'volunteer',
   })
   const supabase = createClient()
 
@@ -152,41 +141,6 @@ export default function Community() {
     return matchesFilter && matchesSearch
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const { error } = await supabase
-        .from('members')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          village: formData.village,
-          role: formData.type, // Set role as the type
-          skills: formData.skills ? formData.skills.split(',').map((s: string) => s.trim()) : [],
-          interests: formData.interests ? formData.interests.split(',').map((i: string) => i.trim()) : [],
-          availability: formData.availability,
-          member_type: formData.type as any,
-          is_active: true,
-          is_approved: false // Needs admin approval
-        })
-      
-      if (error) throw error
-      
-      toast.success('Thank you for joining! Your request has been sent to admin for approval.')
-      setShowJoinForm(false)
-      setFormData({
-        name: '', email: '', phone: '', village: '', skills: '', interests: '', availability: '', type: 'volunteer'
-      })
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to submit. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -274,10 +228,10 @@ export default function Community() {
           </div>
         </div>
 
-        {/* Join Button */}
-        <div className="text-center mb-12">
-          <button
-            onClick={() => setShowJoinForm(true)}
+        {/* Join & Hub Buttons */}
+        <div className="text-center mb-12 flex flex-wrap justify-center gap-4">
+          <Link
+            href="/community/join"
             className="group relative bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 md:px-12 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-primary-600/40 transition-all duration-300 inline-flex items-center gap-2 overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-primary-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
@@ -285,7 +239,17 @@ export default function Community() {
               <Sparkles className="w-5 h-5" />
               Join APC Community
             </span>
-          </button>
+          </Link>
+          <Link
+            href="/community/hub"
+            className="group relative bg-gradient-to-r from-purple-600 to-purple-700 text-white px-8 md:px-12 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-purple-600/40 transition-all duration-300 inline-flex items-center gap-2 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-purple-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <span className="relative flex items-center gap-2">
+              <MessageSquare className="w-5 h-5" />
+              Community Hub
+            </span>
+          </Link>
         </div>
 
         {/* Active Members */}
@@ -364,115 +328,6 @@ export default function Community() {
               ))}
             </div>
           </section>
-        )}
-
-        {/* Join Form Modal */}
-        {showJoinForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
-              <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Join APC Community</h2>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Email *</label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Phone *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Village *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.village}
-                    onChange={(e) => setFormData({ ...formData, village: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">I want to join as *</label>
-                  <select
-                    required
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  >
-                    <option value="volunteer">Volunteer</option>
-                    <option value="mentor">Mentor</option>
-                    <option value="student">Student</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Skills</label>
-                  <input
-                    type="text"
-                    value={formData.skills}
-                    onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                    placeholder="e.g., Teaching, Event Management, Web Development"
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Interests</label>
-                  <input
-                    type="text"
-                    value={formData.interests}
-                    onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                    placeholder="e.g., Education, Community Service, Technology"
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Availability</label>
-                  <input
-                    type="text"
-                    value={formData.availability}
-                    onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                    placeholder="e.g., Weekends, 5-8 PM on weekdays"
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-600/30 transition-all duration-300"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowJoinForm(false)}
-                    className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
         )}
       </div>
     </div>

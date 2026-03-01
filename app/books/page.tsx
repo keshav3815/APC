@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { BookOpen, Users, Heart, TrendingUp, Star, Quote, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
+import BookDonateForm from '@/components/books/BookDonateForm'
 
 interface Testimonial {
   id: string
@@ -33,23 +34,13 @@ interface BookDonation {
 
 export default function Books() {
   const [showDonateForm, setShowDonateForm] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bookTitle: '',
-    author: '',
-    category: 'school',
-    type: 'physical',
-    condition: '',
-  })
   const [stats, setStats] = useState({
     booksDonated: 0,
     booksDistributed: 0,
     activeUsers: 0,
     impactCounter: 0,
+    categoryBreakdown: {} as Record<string, number>,
   })
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [bookIssues, setBookIssues] = useState<BookIssue[]>([])
@@ -110,12 +101,26 @@ export default function Books() {
         .single()
       
       if (statsData) {
-        setStats({
+        setStats(prev => ({
+          ...prev,
           booksDonated: statsData.books_donated || 0,
           booksDistributed: statsData.books_distributed || 0,
           activeUsers: statsData.active_users || 0,
           impactCounter: statsData.lives_impacted || 0,
+        }))
+      }
+
+      // Fetch book counts by category
+      const { data: booksData } = await supabase
+        .from('books')
+        .select('category')
+      if (booksData) {
+        const breakdown: Record<string, number> = {}
+        booksData.forEach((b: any) => {
+          const cat = b.category || 'other'
+          breakdown[cat] = (breakdown[cat] || 0) + 1
         })
+        setStats(prev => ({ ...prev, categoryBreakdown: breakdown }))
       }
 
       // Fetch testimonials
@@ -184,38 +189,7 @@ export default function Books() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const { error } = await supabase
-        .from('book_donations')
-        .insert({
-          donor_name: formData.name,
-          donor_email: formData.email,
-          donor_phone: formData.phone,
-          book_title: formData.bookTitle,
-          author: formData.author,
-          category: formData.category,
-          book_type: formData.type,
-          condition: formData.condition,
-          status: 'pending'
-        })
-      
-      if (error) throw error
-      
-      toast.success('Thank you for your donation! We will contact you soon to arrange pickup/delivery.')
-      setShowDonateForm(false)
-      setFormData({
-        name: '', email: '', phone: '', bookTitle: '', author: '', category: 'school', type: 'physical', condition: ''
-      })
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to submit donation. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
+
 
   if (pageLoading) {
     return (
@@ -290,11 +264,13 @@ export default function Books() {
           <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Book Categories</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: 'School', icon: '📚', count: 100, desc: 'Textbooks and reference materials' },
-              { name: 'Competitive Exams', icon: '📖', count: 200, desc: 'Exam preparation books' },
-              { name: 'Skill Development', icon: '💼', count: 50, desc: 'Professional and technical skills' },
-              { name: 'Self-Help', icon: '🌟', count: 50, desc: 'Personal growth and motivation' },
-            ].map((category, index) => (
+              { name: 'School', icon: '📚', key: 'school', desc: 'Textbooks and reference materials' },
+              { name: 'Competitive Exams', icon: '📖', key: 'competitive', desc: 'Exam preparation books' },
+              { name: 'Skill Development', icon: '💼', key: 'skill', desc: 'Professional and technical skills' },
+              { name: 'Self-Help', icon: '🌟', key: 'self-help', desc: 'Personal growth and motivation' },
+            ].map((category, index) => {
+              const count = stats.categoryBreakdown?.[category.key] || 0
+              return (
               <div
                 key={category.name}
                 className="group relative bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:-translate-y-2"
@@ -302,10 +278,11 @@ export default function Books() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-500/15 rounded-2xl transition-all duration-300 -z-10"></div>
                 <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">{category.icon}</div>
                 <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{category.name}</h3>
-                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400 text-center mb-3">{category.count}+</p>
+                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400 text-center mb-3">{count}+</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 text-center group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">{category.desc}</p>
               </div>
-            ))}
+              )
+            })}
           </div>
         </section>
 
@@ -470,115 +447,12 @@ export default function Books() {
           </section>
         )}
 
-        {/* Donate Form Modal */}
+        {/* Multi-Step Donate Form */}
         {showDonateForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Donate Books</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Your Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email *</label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Phone *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Book Title *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.bookTitle}
-                    onChange={(e) => setFormData({ ...formData, bookTitle: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Author</label>
-                  <input
-                    type="text"
-                    value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Category *</label>
-                  <select
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    <option value="school">School</option>
-                    <option value="competitive">Competitive Exams</option>
-                    <option value="skill">Skill Development</option>
-                    <option value="self-help">Self-Help</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Book Type *</label>
-                  <select
-                    required
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    <option value="physical">Physical Book</option>
-                    <option value="digital">Digital Book</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Condition (for physical books)</label>
-                  <input
-                    type="text"
-                    value={formData.condition}
-                    onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-                    placeholder="e.g., Like new, Good, Fair"
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-                  >
-                    Submit Donation
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowDonateForm(false)}
-                    className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <BookDonateForm
+            onClose={() => setShowDonateForm(false)}
+            onSuccess={() => fetchData()}
+          />
         )}
       </div>
     </div>

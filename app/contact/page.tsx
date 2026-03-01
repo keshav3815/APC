@@ -27,11 +27,29 @@ export default function Contact() {
   })
   const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const [socialLinks, setSocialLinks] = useState<{facebook: string, instagram: string}>({facebook: '', instagram: ''})
   const supabase = createClient()
 
   useEffect(() => {
     fetchSettings()
+    fetchSocialLinks()
   }, [])
+
+  const fetchSocialLinks = async () => {
+    const { data } = await supabase
+      .from('site_content')
+      .select('*')
+      .eq('page', 'contact')
+      .like('section', 'social_%')
+    if (data) {
+      const links: any = {}
+      data.forEach((d: any) => {
+        if (d.section === 'social_facebook') links.facebook = d.body
+        if (d.section === 'social_instagram') links.instagram = d.body
+      })
+      setSocialLinks(links)
+    }
+  }
 
   const fetchSettings = async () => {
     const { data } = await supabase
@@ -41,9 +59,9 @@ export default function Contact() {
     
     if (data) {
       setSettings({
-        contact_email: data.contact_email || 'contact@apc.org',
-        contact_phone: data.contact_phone || '+91 1234567890',
-        address: data.address || '123 Community Street, Mumbai, Maharashtra 400001, India',
+        contact_email: data.contact_email || 'apcfoundation2015@gmail.com',
+        contact_phone: data.contact_phone || '7053324988',
+        address: data.address || 'Bheja, Madhepur, Madhubani, Bihar, India 847408',
         social_links: data.social_links || {}
       })
     }
@@ -137,12 +155,16 @@ export default function Contact() {
                 <div className="glass card-hover p-8 rounded-2xl delay-300 stagger-item">
                   <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Follow Us</h3>
                   <div className="flex space-x-4">
-                    <a href="https://www.facebook.com/apcbheja" target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover-lift transition-all">
+                    {socialLinks.facebook && (
+                    <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover-lift transition-all">
                       <Facebook className="w-5 h-5" />
                     </a>
-                    <a href="https://www.instagram.com/apcbheja/" target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-lg hover-lift transition-all">
+                    )}
+                    {socialLinks.instagram && (
+                    <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-lg hover-lift transition-all">
                       <Instagram className="w-5 h-5" />
                     </a>
+                    )}
                   </div>
                 </div>
               </div>

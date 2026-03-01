@@ -25,11 +25,13 @@ export default function Volunteer() {
     experience: '',
   })
   const [loading, setLoading] = useState(false)
-  const [opportunities, setOpportunities] = useState<VolunteerOpportunity[]>([])
+  const [opportunities, setOpportunities] = useState<VolunteerOpportunity[]>([]) 
+  const [whyCards, setWhyCards] = useState<{title: string, body: string, section: string}[]>([])
   const supabase = createClient()
 
   useEffect(() => {
     fetchOpportunities()
+    fetchWhyVolunteer()
   }, [])
 
   const fetchOpportunities = async () => {
@@ -41,39 +43,18 @@ export default function Volunteer() {
     
     if (data && data.length > 0) {
       setOpportunities(data)
-    } else {
-      // Default opportunities if none in database
-      setOpportunities([
-        {
-          id: '1',
-          title: 'Event Organization',
-          description: 'Help organize and manage community events',
-          time_commitment: '5-10 hours/week',
-          skills_required: ['Event management', 'Communication'],
-        },
-        {
-          id: '2',
-          title: 'Book Distribution',
-          description: 'Coordinate book donations and distributions',
-          time_commitment: '3-5 hours/week',
-          skills_required: ['Logistics', 'Community outreach'],
-        },
-        {
-          id: '3',
-          title: 'Teaching & Mentoring',
-          description: 'Teach or mentor students in various subjects',
-          time_commitment: '4-8 hours/week',
-          skills_required: ['Teaching', 'Subject expertise'],
-        },
-        {
-          id: '4',
-          title: 'Digital Support',
-          description: 'Help with website, social media, and digital initiatives',
-          time_commitment: '5-10 hours/week',
-          skills_required: ['Digital skills', 'Content creation'],
-        },
-      ])
     }
+  }
+
+  const fetchWhyVolunteer = async () => {
+    const { data } = await supabase
+      .from('site_content')
+      .select('*')
+      .eq('page', 'volunteer')
+      .like('section', 'why_%')
+      .eq('is_visible', true)
+      .order('display_order')
+    if (data) setWhyCards(data)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,32 +103,24 @@ export default function Volunteer() {
           </div>
 
           {/* Why Volunteer */}
+          {whyCards.length > 0 && (
           <section className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-12">
             <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Why Volunteer?</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <Heart className="w-12 h-12 mx-auto mb-3 text-primary-600" />
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Make Impact</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Contribute to meaningful causes and see real change
-                </p>
-              </div>
-              <div className="text-center">
-                <Users className="w-12 h-12 mx-auto mb-3 text-primary-600" />
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Build Community</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Connect with like-minded individuals and expand your network
-                </p>
-              </div>
-              <div className="text-center">
-                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-primary-600" />
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Grow Skills</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Develop new skills and gain valuable experience
-                </p>
-              </div>
+              {whyCards.map((card, idx) => {
+                const icons = [Heart, Users, CheckCircle]
+                const Icon = icons[idx % icons.length]
+                return (
+                  <div key={card.section} className="text-center">
+                    <Icon className="w-12 h-12 mx-auto mb-3 text-primary-600" />
+                    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{card.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">{card.body}</p>
+                  </div>
+                )
+              })}
             </div>
           </section>
+          )}
 
           {/* Volunteer Opportunities */}
           <section className="mb-12">

@@ -33,6 +33,7 @@ import colorlog
 from config import LOG_DIR
 from database import upsert_exam, get_all_student_emails
 from notifier import send_new_exam_notification
+from webhook import push_results
 from scrapers import ALL_SCRAPERS
 
 # ── Logging ──────────────────────────────────────────────────────────────────
@@ -122,6 +123,7 @@ def main() -> int:
 
     # ── Per-scraper run ──────────────────────────────────────────────────────
     totals = {"scraped": 0, "new": 0, "updated": 0, "errors": 0, "notified": 0}
+    all_exams: list[dict] = []   # collect for webhook push
 
     for ScraperClass in scraper_classes:
         scraper = ScraperClass()
@@ -130,6 +132,7 @@ def main() -> int:
             exams = scraper.fetch()
             totals["scraped"] += len(exams)
             logger.info("%s: scraped %d exam(s)", scraper.NAME, len(exams))
+            all_exams.extend(exams)   # accumulate for webhook
 
             for exam in exams:
                 if not exam.get("exam_name") or not exam.get("official_website"):
@@ -177,6 +180,16 @@ def main() -> int:
         totals["scraped"], totals["new"], totals["updated"],
         totals["errors"], totals["notified"],
     )
+
+    # ── Push results to the Next.js webhook ──────────────────────────────────
+    if not args.dry_run:
+        scrapers_used = [cls.NAME for cls in scraper_classes]
+        push_results(
+            scrapers=scrapers_used,
+            exams=all_exams,
+            stats=totals,
+            error_log="" if totals["errors"] == 0 else f"{totals['errors']} error(s) during run",
+        )
 
     return 0 if totals["errors"] == 0 else 1
 

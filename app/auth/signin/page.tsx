@@ -30,7 +30,6 @@ function SignInForm() {
       } else {
         toast.success('Welcome back!')
         router.push(redirectTo)
-        router.refresh()
       }
     } catch (err) {
       toast.error('An unexpected error occurred')

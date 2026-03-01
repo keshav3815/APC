@@ -23,6 +23,7 @@ import {
   MessageSquare,
   Image,
   GraduationCap,
+  Bot,
 } from 'lucide-react'
 
 interface AdminLayoutProps {
@@ -37,9 +38,11 @@ const menuItems = [
   { href: '/admin/books', label: 'Library', icon: BookOpen },
   { href: '/admin/book-donations', label: 'Book Donations', icon: Heart },
   { href: '/admin/exams', label: 'Exam Hub', icon: GraduationCap },
+  { href: '/admin/crawler', label: 'Exam Crawler', icon: Bot },
   { href: '/admin/events', label: 'Events', icon: Calendar },
   { href: '/admin/expenses', label: 'Expenses', icon: FileText },
   { href: '/admin/volunteers', label: 'Volunteers', icon: Users },
+  { href: '/admin/community', label: 'Community', icon: Users },
   { href: '/admin/contact', label: 'Contact Inquiries', icon: MessageSquare },
   { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
   { href: '/admin/media', label: 'Media', icon: Image },

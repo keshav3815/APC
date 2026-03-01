@@ -106,6 +106,20 @@ export default function ExamsPage() {
   useEffect(() => { fetchExams() }, [filters])
   useEffect(() => { fetchUserData() }, [user?.id])
 
+  // Realtime subscription — auto-refresh when exams are inserted/updated/deleted
+  useEffect(() => {
+    const channel = supabase
+      .channel('exams-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'exams' },
+        () => { fetchExams() }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [fetchExams])
+
   const handleSaveToggle = (examId: string, saved: boolean) => {
     setSavedExamIds(prev => {
       const next = new Set(prev)

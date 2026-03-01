@@ -209,7 +209,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                1000+
+                {targetStats.members}+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Active Members</div>
             </div>
@@ -222,7 +222,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                350+
+                {targetStats.books}+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Books Distributed</div>
             </div>
@@ -235,7 +235,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse-glow">
-                50+
+                {targetStats.events}+
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-medium">Events Organized</div>
             </div>
@@ -351,9 +351,9 @@ export default function Home() {
             <div className="mt-16 pt-12 border-t border-white border-opacity-20">
               <p className="text-primary-100 mb-6 animate-fade-in-up delay-300">Trusted by community members worldwide</p>
               <div className="flex justify-center gap-8 flex-wrap animate-fade-in-up delay-400">
-                <Badge text="1500+ Members" variant="primary" />
-                <Badge text="500+ Books" variant="primary" />
-                <Badge text="50+ Events" variant="primary" />
+                <Badge text={`${targetStats.members}+ Members`} variant="primary" />
+                <Badge text={`${targetStats.books}+ Books`} variant="primary" />
+                <Badge text={`${targetStats.events}+ Events`} variant="primary" />
               </div>
             </div>
           </div>
